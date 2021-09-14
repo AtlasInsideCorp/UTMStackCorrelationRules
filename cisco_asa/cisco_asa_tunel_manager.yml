@@ -1,0 +1,21 @@
+- name: "Tunnel Manager received invalid parameter to remove record"
+  severity: "Hight"
+  description: "A failure to remove a record from the tunnel manager that might prevent future tunnels to the same peer from initiating has occurred."
+  solution: "Reloading the device will remove the record, but if the error persists or recurs, perform additional debugging of the specific tunnel attempt."
+  category: "firewall"
+  tatic: "IKEv2 Toolkit"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 752001
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

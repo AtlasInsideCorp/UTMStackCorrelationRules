@@ -1,0 +1,31 @@
+- name: "A new process has been created and UAC is disabled"
+  severity: "Low"
+  description: | 
+    "This event generates every time a new process starts. Typically this means that UAC is disabled for this account for some reason"
+  solution: |
+   "Security applications that look for behavior used during exploitation such as Windows Defender Exploit Guard (WDEG) and the Enhanced Mitigation Experience Toolkit (EMET) can be used to mitigate some exploitation behavior. Control flow integrity checking is another way to potentially identify and stop a software exploit from occurring.Many of these protections depend on the architecture and target application binary for compatibility."
+  category: "Exploitation for Client Execution"
+  tactic: "Execution"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4688
+        - field: "logx.wineventlog.event_data.TokenElevationType"
+          operator: "=="
+          value: "%%1936"
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          operator: "not contain"
+          value: "$"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

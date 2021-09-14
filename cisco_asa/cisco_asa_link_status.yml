@@ -1,0 +1,22 @@
+- name: "Link status Up"
+  severity: "Hight"
+  description: "The results of monitoring the link status of the specified interface have been reported. Primary can also be listed as Secondary for the secondary unit."
+  solution: "If the link status is down, verify that the network connected to the specified interface is operating correctly."
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105006
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

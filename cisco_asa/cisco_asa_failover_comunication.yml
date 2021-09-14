@@ -1,0 +1,22 @@
+- name: "Failover cable communication failure"
+  severity: "Hight"
+  description: "The failover cable is not permitting communication between the primary and secondary units. Primary can also be listed as Secondary for the secondary unit."
+  solution: "Ensure that the cable is connected correctly."
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105011
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

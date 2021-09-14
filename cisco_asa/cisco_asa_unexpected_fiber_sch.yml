@@ -1,0 +1,22 @@
+- name: "Unexpected fiber scheduler error; possible out-of-memory condition."
+  severity: "Hight"
+  description: "The ASA has experienced an unexpected error and has recovered"
+  solution: "Check for high CPU usage or CPU hogs, and potential memory leaks. If the problem persists, contact the Cisco TAC."
+  category: "firewall"
+  tatic: "WebVPN and AnyConnect Client "
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 716528
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

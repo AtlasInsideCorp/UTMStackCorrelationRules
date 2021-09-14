@@ -1,0 +1,24 @@
+- name: Cisco Crypto Commands
+  severity: Hight
+  description: Show when private keys are being exported from the device, or when new certificates are installed
+  solution: When possible, store keys on separate cryptographic hardware instead of on the local system. 
+  category:  Private Keys
+  tactic: Credential Access
+  reference: "https://attack.mitre.org/techniques/T1145"
+  frequency: 360
+cache: 
+  - oneOff:
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "crypto pki export"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "crypto pki import"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "crypto pki trustpoint"
+  timeLapse: 6000
+  minCount: 1
+  save: 
+    - field: "logx.cisco_asa.clientIP"
+      alias: SourceIP

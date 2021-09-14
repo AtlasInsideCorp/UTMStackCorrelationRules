@@ -1,0 +1,25 @@
+- name: Cisco Show Commands Input
+  severity: Medium
+  description: See what commands are being input into the device by other people, full credentials can be in the history
+  solution: |
+    There are multiple methods of preventing a user's command history from being flushed to their .bash_history file, including use of the following commands:set +o history and set -o history to start logging again;unset HISTFILE being added to a user's .bash_rc file; andln -s /dev/null ~/.bash_history to write commands to /dev/nullinstead.
+  category: Bash History    
+  tactic: Credential Access
+  reference: "https://attack.mitre.org/techniques/t1552.003"
+  frequency: 360
+  cache: 
+    - oneOff:
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "show history"
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "show history all"
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "show logging"
+    timelapse: 6000
+    minCount: 1
+    save: 
+      - field: "logx.cisco_asa.clientIP"
+        alias: SourceIP

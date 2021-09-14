@@ -1,0 +1,21 @@
+- name: Cisco Disabling Logging
+  severity: Hight
+  description: Turn off logging locally or remote
+  solution: Ensure proper user permissions are in place to prevent adversaries from disabling or interfering with security services.
+  category: Disable or Modify Tools 
+  tactic: Defense Evasion
+  reference: "https://attack.mitre.org/techniques/T1089"
+  frequency: 360
+  cache: 
+  - oneOff:
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "no logging"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "no aaa new-model"
+  timelapse: 6000
+  minCount: 1
+  save: 
+    - field: "logx.cisco_asa.clientIP"
+      alias: SourceIP

@@ -1,0 +1,27 @@
+- name: Cisco Collect Data
+  severity: Low
+  description: Collect pertinent data from the configuration files
+  solution: Restrict file shares to specific directories with access only to necessary users.
+  category: Credentials In Files
+  tactic: Credential Access
+  reference: https://attack.mitre.org/techniques/T1081
+  frequency: 360
+ cache: 
+  - oneOff:
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "show running-config"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "show startup-config"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "show archive config"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "more"
+  timeLapse: 6000
+  minCount: 2
+  save: 
+    - field: "logx.cisco_asa.clientIP"
+      alias: SourceIP

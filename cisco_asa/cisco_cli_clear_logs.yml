@@ -1,0 +1,22 @@
+-name: Cisco Clear Logs
+  severity: Hight
+  description: Clear command history in network OS which is used for defense evasion
+  solution: |
+    Preventing users from deleting or writing to certain files can stop adversaries from maliciously altering their ~/.bash_history or ConsoleHost_history.txt files.
+  category: "Clear Command History"
+  tactic: Defense Evasion
+  reference: "https://attack.mitre.org/techniques/T1146"
+  frequency: 360
+  cache: 
+    - oneOff:
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "clear logging"
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "clear archive"
+    timelapse: 6000
+    minCount: 1
+    save: 
+      - field: "logx.cisco_asa.clientIP"
+        alias: SourceIP

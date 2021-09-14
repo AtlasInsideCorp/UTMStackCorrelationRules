@@ -1,0 +1,22 @@
+- name: "Power Supply Unit Redundancy Lost"
+  severity: "Hight"
+  description: "A power supply failure occurred. Power supply unit redundancy has been lost, but the ASA is functioning normally with minimum resources. Any further failures will result in an ASA shutdown."
+  solution: "To regain full redundancy, perform the following steps:Check for AC power failure,Replace the power supply or If the problem persists, record the message as it appears and contact the Cisco TAC."
+  category: "firewall"
+  tatic: "Environment Monitoring"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 735006
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

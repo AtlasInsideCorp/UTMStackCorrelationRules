@@ -1,0 +1,22 @@
+- name: "Failed to initialize SFP in 4GE SSM I/O card."
+  severity: "Hight"
+  description: "The system failed to initialize an SFP connector in a 4GE SSM I/O card because of an I2C error or a switch initialization error."
+  solution: "Log and review the messages and the errors associated with the event, Reboot the software running on the ASA. Power cycle the device. When you turn off the power, make sure you wait several seconds before turning the power on."
+  category: "firewall"
+  tatic: "SSL VPN Client "
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 114002
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

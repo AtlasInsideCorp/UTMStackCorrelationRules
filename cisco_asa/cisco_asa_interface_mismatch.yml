@@ -1,0 +1,22 @@
+- name: "Interface count mismatch."
+  severity: "Hight"
+  description: "Normally, this is caused by an interruption in the replication service. Primary can also be listed as Secondary for thesecondary unit."
+  solution: "Once the failover is detected by the ASA, the ASA automatically reboots and loads the configuration from flash memory and/or resynchronizes with another ASA. If failovers occur continuously, check the failover configuration and make sure that both ASAs can communicate with each other."
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105038
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

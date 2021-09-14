@@ -1,0 +1,24 @@
+- name: Cisco Denial of Service
+  severity: Medium
+  description: Detect a system being shutdown or put into different boot mode
+  solution: Patch the BIOS and other firmware as necessary to prevent successful use of known vulnerabilities.
+  category: Firmware Corruption
+  tactic: Impact
+  reference: https://attack.mitre.org/tactics/TA0040
+  frequency: 360
+  cache: 
+  - oneOff:
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "shutdown"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "config-register 0x2100"
+    - field: logx.wineventlog.message
+      operator: "=="
+      value:  "config-register 0x2142"
+  timelapse: 6000
+  minCount: 1
+  save: 
+    - field: "logx.cisco_asa.clientIP"
+      alias: SourceIP

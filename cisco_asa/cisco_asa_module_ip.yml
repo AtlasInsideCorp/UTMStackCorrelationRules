@@ -1,0 +1,22 @@
+- name: " Module ips experienced a data channel communication failure, data channel is DOWN."
+  severity: "Hight"
+  description: "A data channel communication failure occurred and the ASA was unable to forward traffic to the services module. This failure triggers a failover when the failure occurs on the active ASA in an HA configuration."
+  solution: "For software services modules such as IPS, recover the module using the sw-module module ips recover command. For hardware services modules, if this message is not the result of the SSM reloading or resetting and the corresponding syslog message 505010 is not seen after the SSM returns to an UP state, reset the module using the hw-module module 1 reset command."
+  category: "firewall"
+  tatic: "Card Management"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 323006
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

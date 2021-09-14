@@ -1,0 +1,22 @@
+- name: "The license server needs to be brought back online to continue using shared licensing."
+  severity: "Hight"
+  description: "The shared backup license server active time has expired. The primary server needs to go online in order for the shared license service to continue."
+  solution: "Register with the primary license server in order to continue using the shared license service."
+  category: "firewall"
+  tatic: "License"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 444111
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

@@ -1,0 +1,23 @@
+- name: "Deny protocol connection spoof from source_address to dest_address on interface interface_name"
+  severity: "Hight"
+  description: | 
+    "A packet matching a connection arrived on a different interface from the interface on which the connection began. In addition, the ip verify reverse-path command is not configured."
+  solution: "Check that the routing is not asymmetric."
+  category: "firewall"
+  tatic: "User Session"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 106022
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

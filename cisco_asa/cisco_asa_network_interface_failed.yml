@@ -1,0 +1,22 @@
+- name: " Other firewall network interface interface_number failed"
+  severity: "Hight"
+  description: "The primary unit has detected a bad network interface on the secondary unit. Primary can also be listed as Secondary for the secondary unit."
+  solution: "Check the network connections on the secondary unit and the network hub connection. If necessary, replace the failed network interface"
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 103003
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

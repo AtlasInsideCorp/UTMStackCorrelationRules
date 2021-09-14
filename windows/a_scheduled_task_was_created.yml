@@ -1,0 +1,22 @@
+- name: "A scheduled task was created"
+  severity: "Medium"
+  description: "This event generates every time a new scheduled task is created"
+  solution: |
+    "Limit privileges of user accounts and remediate Privilege Escalation vectors so only authorized administrators can create scheduled tasks on remote systems."
+  category: "Scheduled Task/Job"
+  tactic: "Execution"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4698"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4698
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

@@ -1,0 +1,31 @@
+- name: "An account failed to log on in local computer"
+  severity: "Low"
+  description: "This event generates if an account logon attempt failed when the account was already locked out. It also generates a logon attempt after which the account is locked out"
+  solution: |
+    "Audit local accounts permission levels routinely to look for situations thaht could allow an adversary to gain wide privileged account. These audits should check if new local accounts are created that have not be authorized. Imlementing LAPS mau help prevent reuse of local administrator credential across a domain"
+  category: "Valid Accounts: Local Accounts"
+  tactic: "Defence Evation"
+  reference:
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4625"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4625
+        - field: "logx.wineventlog.event_data.LogonType"
+          operator: "=="
+          value: 2
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.IpAddress"
+          alias: "SourceIp"
+        - field: "logx.wineventlog.event_data.IpPort"
+          alias: "SourcePort"
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

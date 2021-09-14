@@ -1,0 +1,22 @@
+- name: "Monitoring on interface interface_name waiting"
+  severity: "Hight"
+  description: "The ASA istesting the specified network interface with the other unit of the failover pair.Primary can also be listed as Secondary for the secondary unit."
+  solution: "None required. The ASA monitors its network interfaces frequently during normal operation."
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105003
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

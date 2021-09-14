@@ -1,0 +1,23 @@
+- name: "Failover message block alloc failed"
+  severity: "Hight"
+  description: | 
+    "Block memory was depleted. This is a transient message and the ASA should recover. Primary can also be listed as Secondary for the secondary unit."
+  solution: " Use the show blocks command to monitor the current block memory"
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Error
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105010
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

@@ -1,0 +1,24 @@
+- name: "A user account was enabled"
+  severity: "Low"
+  description: "This event generates every time a user or computer object is enabled. Microsoft recommends monitoring all 4722 events for local accounts because these accounts usually do not change often. This is especially relevant for critical servers, administrative workstations, and other high-value assets"
+  solution: "This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of system features. "
+  category: "Permission Groups Discovery: Local Groups"
+  tactic: "Discovery"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4722"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4722
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"
+

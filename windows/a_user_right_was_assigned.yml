@@ -1,0 +1,23 @@
+- name: "A user right was assigned"
+  severity: "Low"
+  description: "This event generates every time local user right policy is changed and user right was assigned to an account. For example, you might need to monitor the use of an account outside of working hours"
+  solution: "This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of system features. "
+  category: "Permission Groups Discovery: Local Groups"
+  tactic: "Discovery"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4704"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4704
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetSid"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

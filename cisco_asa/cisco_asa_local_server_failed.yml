@@ -1,0 +1,21 @@
+- name: "Local CA Server has failed and is being disabled."
+  severity: "Hight"
+  description: "The local CA server is being disabled because of an error"
+  solution: "Based on the reason, take the necessary steps to resolve the issue"
+  category: "firewall"
+  tatic: "PKI Certification Authority"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 717040
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

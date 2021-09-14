@@ -1,0 +1,30 @@
+- name: "A user account was manually created"
+  severity: "Low"
+  description: "This typically means this is a manually created user account, which you might need to monitor"
+  solution: "This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of system features. "
+  category: "Permission Groups Discovery: Local Groups"
+  tactic: "Discovery"
+  reference: 
+    - "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4672"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4625
+        - field: "logx.wineventlog.event_data.PasswordLastSet"
+          operator: "::"
+          value: "never"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.IpAddress"
+          alias: "SourceIp"
+        - field: "logx.wineventlog.event_data.IpPort"
+          alias: "SourcePort"
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

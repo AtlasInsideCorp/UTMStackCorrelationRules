@@ -1,0 +1,22 @@
+- name: "Switching to OK."
+  severity: "Hight"
+  description: "A previously failed unit reportsthat it is operating again.Primary can also be listed asSecondary for the secondary unit."
+  solution: "Check the messages for the primary unit for an indication of the nature of the problem."
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 104004
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

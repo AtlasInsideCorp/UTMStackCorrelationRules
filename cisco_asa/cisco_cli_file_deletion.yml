@@ -1,0 +1,24 @@
+- name: Cisco File Deletion
+  severity: Medium
+  description: See what files are being deleted from flash file systems
+  solution: This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of system features.
+  category: File Deletion
+  tactic: Defense Evasion
+  reference: "https://attack.mitre.org/techniques/t1070.004"
+  frequency: 360
+  cache: 
+    - oneOff:
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "erase"
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "delete"
+      - field: logx.wineventlog.message
+        operator: "=="
+        value:  "format"
+    timelapse: 6000
+    minCount: 1
+    save: 
+      - field: "logx.cisco_asa.clientIP"
+        alias: SourceIP

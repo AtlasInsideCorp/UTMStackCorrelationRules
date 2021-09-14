@@ -1,0 +1,21 @@
+- name: "Dropped a LAN Failover command message."
+  severity: "Hight"
+  description: "The ASA dropped an unacknowledged LAN failover command message, indicating a connectivity problem exists on the LAN failover interface"
+  solution: "n Check that the LAN interface cable is connected."
+  category: "firewall"
+  tatic: "Failover"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105036
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

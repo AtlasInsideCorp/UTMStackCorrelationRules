@@ -1,0 +1,21 @@
+- name: "user failed authentication"
+  severity: "Hight"
+  description: "The user entered the wrong password while trying to change it. As a result, the password was not changed."
+  solution: "The user should retry changing the password using the change-password command."
+  category: "firewall"
+  tatic: "User Authentication "
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 772006
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

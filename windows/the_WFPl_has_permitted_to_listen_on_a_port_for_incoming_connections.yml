@@ -1,0 +1,25 @@
+- name: "The Windows Filtering Platform has permitted an application or service to listen on a port for incoming connections"
+  severity: "Low"
+  description: "This event generates every time Windows Filtering Platform permits an application or service to listen on a port"
+  solution: "Limit privileges of user accounts and groups so that only authorized administrators can interact with system-level process changes and service configurations. Restrict software installation to trusted repositories only be cautious of orphaned software packages"
+  category: "Create or Modify System Process"
+  tactic: "Persistence"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5154#security-monitoring-recommendations"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 5154
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SourceAddress"
+          alias: "SourceIP"
+        - field: "logx.wineventlog.event_data.SourcePort"
+          alias: "SourcePort"
+        - field: "logx.wineventlog.event_data.Protocol"
+          alias: "Protocol"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

@@ -1,0 +1,22 @@
+- name: "System memory utilization has reached the configured watchdog trigger level of Y %. System will now reload"
+  severity: "Hight"
+  description: "The system memory utilization has reached 100% of the system memory watchdog facility's configured value. The system will automatically reload."
+  solution: "None required"
+  category: "firewall"
+  tatic: "System"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 199021
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

@@ -1,0 +1,22 @@
+- name: "An unsupported ASA and IPS configuration is installed"
+  severity: "Hight"
+  description: "An unsupported ASA and IPS configuration has been detected during IPS SSP setup for slot 1. The ASA should continue to function normally with an unsupported configuration. mpc_description —A description string for the ASA model, which can be one of"
+  solution: "None required"
+  category: "firewall"
+  tatic: "System"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 413007
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

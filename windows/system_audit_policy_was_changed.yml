@@ -1,0 +1,21 @@
+- name: "System audit policy was changed"
+  severity: "Medium"
+  description: "This event generates when the computer's audit policy changes. If this action was not planned, investigate the reason for the change"
+  solution: "Identify and correct GPO permissions abuse opportunities using auditing tools such as BloodHund"
+  category: "Domain Policy Modification"
+  tactic: "Defense Evasion"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4719"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4719
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

@@ -1,0 +1,23 @@
+- name: "Extraction of username from VPN client certificate has string."
+  severity: "Hight"
+  description: | 
+    "The processing request of a username from a certificate is running or has finished"
+  solution: " None required."
+  category: "firewall"
+  tatic: "User Authentication"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 113028
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        

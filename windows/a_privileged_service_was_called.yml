@@ -1,0 +1,35 @@
+- name: "A privileged service was called"
+  severity: "Low"
+  description: |
+    "While not inherently malicious, this could be indicative of adversary activity using the PowerShell binary to perform code injection or protected credential access. In this instance, the privilege SeTcbPrivilege was invoked by the PowerShell binary as a normal user. Adversaries can abuse the SeTcbPrivilege to generate a new token with additional privileges or features that are then used with impersonation"
+  solution: | 
+    "Security applications that look for behavior used during exploitation such as Windows Defender Exploit Guard (WDEG) and the Enhanced Mitigation Experience Toolkit (EMET) can be used to mitigate some exploitation behavior.Control flow integrity checking is another way to potentially identify and stop a software exploit from occurring. Many of these protections depend on the architecture and target application binary for compatibility and may not work for software targeted for defense evasion"
+  category: "Exploitation for Credential Access"
+  tactic: "Credential Access"
+  reference: 
+    - "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4673"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4673
+        - field: "logx.wineventlog.event_data.PrivilegeList"
+          operator: "contains"
+          value: "SeTcbPrivilege"
+        - field: "logx.wineventlog.event_data.PrivilegeList"
+          operator: "contains"
+          value: "SeTcbPrivilege"
+        - field: "logx.wineventlog.event_data.SubjectUserSid"
+          operator: "!="
+          value: "S-1-5-18"
+        - field: "logx.wineventlog.event_data.ProcessName"
+          operator: "contains"
+          value: "powershell.exe"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

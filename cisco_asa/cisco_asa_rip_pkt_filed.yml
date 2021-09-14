@@ -1,0 +1,22 @@
+- name: "RIP pkt failed."
+  severity: "Hight"
+  description: "An ruuter bug, a packet with non-RFC values inside, or a malformed entry may have caused this message to appear. This should not happen, and may be an attempt to exploit the routing table of the ASA."
+  solution: "This message indicates a possible attack and should be monitored. The packet has passed authentication, if enabled, and bad data is in the packet. Monitor the situation and change the keys if there are any doubts about the originator of the packet."
+  category: "firewall"
+  tatic: "User Session"
+  reference: "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 107002
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
+        
