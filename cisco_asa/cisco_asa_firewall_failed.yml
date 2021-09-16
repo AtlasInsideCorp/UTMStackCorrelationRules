@@ -1,0 +1,23 @@
+- name: "Other firewall reports this firewall failed"
+  severity: "High"
+  description: | 
+    "The primary unit received a message from the secondary unit indicating that the primary unit has failed. Primary can also be listed as Secondary for the secondary unit."
+  solution: "Verify the status of the primary unit."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 103004
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

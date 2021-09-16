@@ -1,0 +1,22 @@
+- name: "IO Hub is running beyond the max thermal operating temperature."
+  severity: "High"
+  description: "The ASA has detected that the IO hub is running beyond the maximum thermal operating temperature, and will shut down immediately after detection."
+  solution: "The chassis and IO hub need to be inspected immediately for ventilation issues."
+  category: "Firewall"
+  tactic: "Environment Monitoring"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 735029
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

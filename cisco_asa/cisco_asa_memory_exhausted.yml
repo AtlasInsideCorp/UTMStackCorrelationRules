@@ -1,0 +1,21 @@
+- name: "Access rules memory exhausted"
+  severity: "High"
+  description: "The access list compilation process has run out of memory. All configuration information that has been added since the lastsuccessful accesslist wasremoved from the ASA, and the most recently compiled set of access lists will continue to be used."
+  category: "Firewall"
+  tactic: "Access Lists"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 106024
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

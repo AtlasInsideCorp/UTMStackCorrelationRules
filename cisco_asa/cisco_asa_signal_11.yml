@@ -1,0 +1,22 @@
+- name: "Signal 11 caught in process/fiber(rtcli async executor (process)/(rtcli async executor) at address 0xf132e03b, corrective action at 0xca1961a0"
+  severity: "High"
+  description: "The system has recovered from a serious error."
+  solution: "Contact the Cisco TAC."
+  category: "Firewall"
+  tactic: "System"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 199010
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

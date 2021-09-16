@@ -1,0 +1,22 @@
+- name: "Duplex-mismatch on interface resulted in transmitter lockup."
+  severity: "High"
+  description: "A duplex mismatch on the port caused a problem in which the port can no longer transmit packets. This condition was detected, and the switch was reset to autorecover. This message applies only to the ASA 5505"
+  solution: "A duplex mismatch exists between the specified port and the ASA 5505 that is connected to it. Correct the duplex mismatch by either setting both devices to autorecover, or hard coding the duplex mismatch for both devices to be the same."
+  category: "firewall"
+  tactic: "System"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 216005
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

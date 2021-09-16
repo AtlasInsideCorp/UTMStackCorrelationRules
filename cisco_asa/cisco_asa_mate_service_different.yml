@@ -1,0 +1,22 @@
+- name: "Mate’s service module is different."
+  severity: "High"
+  description: "The failover process detected that different applications are running on the service modules in the active and standby units. The two failover units are incompatible if different service modules are used."
+  solution: "Make sure that both units have identical service modules before trying to reenable failover."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105048
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

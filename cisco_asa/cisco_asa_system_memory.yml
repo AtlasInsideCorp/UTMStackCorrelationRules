@@ -1,0 +1,22 @@
+- name: "System memory utilization has reached"
+  severity: "High"
+  description: "The system memory utilization has reached 80% of the system memory watchdog facility's configured value."
+  solution: "Reduce system memory utilization by reducing traffic load, removing traffic inspections, reducing the number of ACL entries, and so on. If a memory leak is suspected, contact Cisco TAC."
+  category: "Firewall"
+  tactic: "System"
+  reference: 
+    - "https://www.cisco.com/b_syslog.pdf"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 199020
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

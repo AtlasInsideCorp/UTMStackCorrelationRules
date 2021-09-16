@@ -1,0 +1,22 @@
+- name: "Tunnel Manager failed to dispatch a KEY_ACQUIRE message"
+  severity: "High"
+  description: "An attempt to dispatch a tunnel initiation attempt failed because of an internal error, such as a memory allocation failure"
+  solution: "Use the memory tracking tools and additional debugging to isolate the issue."
+  category: "Firewall"
+  tactic: "IKEv2 Toolkit"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 752005
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

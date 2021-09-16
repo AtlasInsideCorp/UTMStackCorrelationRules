@@ -1,0 +1,23 @@
+- name: "Error creating authentication header from access token"
+  severity: "High"
+  description: | 
+    "An internal error occurred while attempting to create an authentication header needed for changingAzure routes."
+  solution: "Copy the error message, the configuration, and any details about the events leading up to the error, and contact Cisco TAC."
+  category: "Firewall"
+  tactic: "Failover"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105529
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

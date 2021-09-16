@@ -1,0 +1,22 @@
+- name: "RIP auth failed."
+  severity: "High"
+  description: "This message might be caused by a misconfiguration on the router or the ASA or by an unsuccessful attempt to attack the routing table of the ASA."
+  solution: "This message indicates a possible attack and should be monitored. If you are not familiar with the source IPaddresslisted in this message, change your RIPauthentication keys between trusted entities. An attacker might be trying to determine the existing keys."
+  category: "Firewall"
+  tactic: "Failover"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 107001
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

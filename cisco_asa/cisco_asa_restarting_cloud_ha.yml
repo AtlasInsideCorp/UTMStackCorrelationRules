@@ -1,0 +1,22 @@
+- name: "Restarting Cloud HA on this unit."
+  severity: "High"
+  description: "An error occurred and caused this HA unit to restart Cloud HA."
+  solution: "Check the backup unit and creation failover connection."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105502
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

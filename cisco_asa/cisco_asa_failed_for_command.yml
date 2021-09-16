@@ -1,0 +1,23 @@
+- name: "Configuration replication failed for command"
+  severity: "High"
+  description: | 
+    "A failover message that appears when the standby unit is unable to complete replication of a configuration sent by the active unit. The command that caused the failure appears at the end of the message"
+  solution: "If the problem persists, contact the Cisco TAC."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 709007
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

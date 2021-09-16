@@ -1,0 +1,22 @@
+- name: "Switching to BACKUP."
+  severity: "High"
+  description: "This HA unit is assuming the Backup role for the Cloud HA pair"
+  solution: "Check the messages for the primary unit for an indication of the nature of the problem."
+  category: "Firewall"
+  tactic: "Failover"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 104501
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

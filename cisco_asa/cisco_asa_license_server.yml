@@ -1,0 +1,22 @@
+- name: "Shared license service inactive. License server is not responding."
+  severity: "High"
+  description: "The shared license service wasinactive because the license server was not responding. The ASA failed to register with the shared license server."
+  solution: "Verify that the license server address, secret, and port are configured correctly"
+  category: "Firewall"
+  tactic: "Licensing"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 444102
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

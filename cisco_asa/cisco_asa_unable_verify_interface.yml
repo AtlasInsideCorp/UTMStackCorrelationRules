@@ -1,0 +1,22 @@
+- name: "Unable to verify the Interface count with mate."
+  severity: "High"
+  description: "This message indicates that the primary ASA is not able to communicate with the secondary ASA over the failover interface.Primary can also be listed asSecondary for the secondaryunit."
+  solution: "Verify the failover LAN, interface configuration, and status on the primary and secondary ASAs. Make sure that the secondary ASA is running the ASA application and that failover isenabled."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105039
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

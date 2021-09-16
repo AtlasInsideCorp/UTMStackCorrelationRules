@@ -1,0 +1,24 @@
+- name: "Incomplete/Slow config replication"
+  severity: "High"
+  description: | 
+    "When a failover occurs, the active ASA detects a partial configuration in memory. Normally,
+    this is caused by an interruption in the replication service. Primary can also be listed as Secondary for the secondary unit"
+  solution: "After the ASA detects the failover, the ASA automatically reboots and loads the configuration from flash memory and/or resynchronizes with another ASA. If failovers occurs continuously, check the failover configuration and make sure that both ASAs can communicate with each other."
+  category: "Firewall"
+  tactic: "Failover"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105020
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
