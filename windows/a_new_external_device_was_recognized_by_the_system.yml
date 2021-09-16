@@ -1,0 +1,24 @@
+- name: "A new external device was recognized by the System"
+  severity: "Low"
+  description: "This event generates every time a new external device is recognized by a system"
+  solution: |
+    "You might have certain computers, machines, or devices on which certain people (accounts) should not typically perform any actions. Monitor the target Computer: (or other target device) for actions performed by the “Subject\Security ID” that you are concerned about."
+  category: "Threat Protection"
+  reference:
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-6416"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 6416
+        - field: "logx.wineventlog.event_data.SubjectUserSid"
+          operator: "!="
+          value: "S-1-5-18"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

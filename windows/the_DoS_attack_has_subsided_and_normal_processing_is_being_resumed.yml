@@ -1,0 +1,19 @@
+- name: "The DoS attack has subsided and normal processing is being resumed"
+  severity: "High"
+  description: "This event can be a sign of ICMP DoS attack or, among other things, hardware or network device related problems. In both cases, we recommend triggering an alert and investigating the reason the event was generated"
+  solution: "Anti-virus can automatically quarentine suspicious files"
+  category: "Phising"
+  tactic: "Initial Access"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5149"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: logx.wineventlog.event_id
+          operator: "=="
+          value: 5149
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

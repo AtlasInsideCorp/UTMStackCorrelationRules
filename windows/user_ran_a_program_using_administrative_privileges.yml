@@ -1,0 +1,29 @@
+- name: " user ran a program using administrative privileges"
+  severity: "Medium"
+  description: "This means that a user ran a program using administrative privileges"
+  solution: "Limit privileges of user accounts and groups so that only authorized administrators can interact with system-level process changes and service configurations. Restrict software installation to trusted repositories only be cautious of orphaned software packages"
+  category: "Create or Modify System Process"
+  tactic: "Persistence"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4688"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4688
+        - field: "logx.wineventlog.event_data.TokenElevationType"
+          operator: "=="
+          value: "%%1937"
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          operator: "not contain"
+          value: "$"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

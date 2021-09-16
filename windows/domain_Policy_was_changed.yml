@@ -1,0 +1,21 @@
+- name: "Domain Policy was changed"
+  severity: "Low"
+  description: "This event occurs when one of the following changes was made to local computer security policy: Computer's \"\\Security Settings\\Account Policies\\Account Lockout Policy\" settings were modified. Computer's \"\\Security Settings\\Account Policies\Password Policy\" settings were modified. \"Network security: Force logoff when logon hours expire\" group policy setting was changed. If this change was not planned, investigate the reason for the change"
+  solution: "Audit domain and local accounts as weel as their permission levels routinely to look for situations that could allow and adversary to gain wide access by obtaining credential of privileged account. Do not put user or admin domainaccounts in te local administrator groups across systemn unless they are tightly controlled and use of accounts is segmented, as his is often equivalent to having a local administrator account whit the same password on all system. Follow best practices for design and administration of an enterprise network to limint privileged account use across administrative tiers"
+  category: "Valid Accounts: Domain Accounts"
+  tactic: "Defence Evation"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4739"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4739
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"
