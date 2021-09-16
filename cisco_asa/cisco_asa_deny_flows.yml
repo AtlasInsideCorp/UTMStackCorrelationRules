@@ -1,0 +1,22 @@
+- name: "Number of cached deny-flows for ACL log has reached limit."
+  severity: "High"
+  description: "This message indicates that the number of matching flows that are cached on the ASA exceeds the user-configured limit (using the access-list deny-flow-max command). This message might be generated as a result of a DoS attack."
+  solution: "Check the limit configured using the access-list deny-flow-max command."
+  category: "Firewall"
+  tactic: "User Session"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 106101
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

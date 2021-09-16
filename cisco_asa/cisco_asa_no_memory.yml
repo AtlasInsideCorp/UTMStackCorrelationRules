@@ -1,0 +1,22 @@
+- name: "No memory for string in string"
+  severity: "High"
+  description: "No memory for string in string"
+  solution: "If sufficient memory exists, then send the error message, the configuration, and any details about the events leading up to the error to the Cisco TAC."
+  category: "Firewall"
+  tactic: "System"
+  reference: 
+    - "https://www.cisco.com/b_syslog.pdf"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 217001
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

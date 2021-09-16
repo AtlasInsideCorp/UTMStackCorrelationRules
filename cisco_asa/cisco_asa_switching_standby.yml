@@ -1,0 +1,22 @@
+- name: "Switching to STANDBY"
+  severity: "High"
+  description: "You have forced the failover pair to switch roles, either by entering the failover active command on the standby unit, or the no failover active command on the active unit. Primary can also be listed as Secondary for the secondary unit"
+  solution: "If the message occurs because of manual intervention, no action isrequired. Otherwise, use the cause reported by the secondary unit to verify the status of both units of the pair"
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 104002
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

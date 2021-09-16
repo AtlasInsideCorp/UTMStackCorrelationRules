@@ -1,0 +1,22 @@
+- name: "An unsupported combination of the power supply module and the fan module is detected."
+  severity: "High"
+  description: "An unsupported combination of the power supply module and the fan module is detected."
+  solution: "When using an ASA 10G SSP and IPS 10G SSP, insert two power supplies instead of one fan module and one power supply module."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 413008
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

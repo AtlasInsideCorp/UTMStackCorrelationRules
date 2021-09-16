@@ -1,0 +1,22 @@
+- name: "URL Server IP_address not responding, ENTERING ALLOW mode."
+  severity: "High"
+  description: "You used the allow option of the filter command, and the Websense servers are not responding. The ASA allows all web requests to continue without filtering while the servers are not available."
+  solution: "None required"
+  category: "Firewall"
+  tactic: "User Session"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html""https://www.cisco.com/b_syslog.pdf"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 304007
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

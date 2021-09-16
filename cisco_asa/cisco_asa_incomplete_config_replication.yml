@@ -1,0 +1,22 @@
+- name: "Standby unit failed to sync due to a locked config."
+  severity: "High"
+  description: "This can occur when an administrator pagesthrough a running configuration on the standby unit while configuration synchronization is in process."
+  solution: "Avoid viewing or modifying the configuration on the standby unit when it first boots up and is in the process of establishing a failover connection with the active unit."
+  category: "Firewall"
+  tactic: "Failover"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105021
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

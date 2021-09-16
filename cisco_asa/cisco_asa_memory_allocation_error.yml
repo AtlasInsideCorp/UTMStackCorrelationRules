@@ -1,0 +1,22 @@
+- name: "Memory allocation error."
+  severity: "High"
+  description: "A memory allocation failure occurred in clustering."
+  solution: "Disable clustering on this unit and try to re-enable it. If the problem persists, check the memory usage on the ASA."
+  category: "Firewall"
+  tactic: "Clustering"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 747011
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

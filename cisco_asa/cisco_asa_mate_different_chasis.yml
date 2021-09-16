@@ -1,0 +1,22 @@
+- name: "Mate has a different chassis."
+  severity: "High"
+  description: "Two failover units have a different type of chassis. For example, one has a three-slot chassis; the other has a six-slot chassis."
+  solution: "Make sure that the two failover units are the same."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105046
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

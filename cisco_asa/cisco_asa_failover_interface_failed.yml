@@ -1,0 +1,22 @@
+- name: "Failover interface failed."
+  severity: "High"
+  description: "Thissyslog is generated when physicalstatus of the failover link is down or when L2 connectivity between the failover peers is lost. The disconnection results in loss of ARPpackets flowing between the units."
+  solution: "Check the physical status of the failover link, ensure its physical and operational status is functional."
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105043
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

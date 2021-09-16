@@ -1,0 +1,22 @@
+- name: "Mate license is not compatible with my license."
+  severity: "High"
+  description: "When the feature licenses do not match between failover peers, failover will be disabled."
+  solution: "Configure the failover peers to have the same feature license, and then reenable failover."
+  category: "Firewall"
+  tactic: "Failover"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105045
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

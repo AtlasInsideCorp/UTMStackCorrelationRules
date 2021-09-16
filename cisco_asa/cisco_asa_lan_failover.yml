@@ -1,0 +1,22 @@
+- name: "LAN Failover interface is down"
+  severity: "High"
+  description: "The LAN failover interface link is down"
+  solution: "Check the connectivity of the LAN failover interface. Make sure that the speed or duplex setting is correct"
+  category: "Firewall"
+  tactic:
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 105032
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

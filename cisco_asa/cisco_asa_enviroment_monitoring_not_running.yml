@@ -1,0 +1,22 @@
+- name: "Environment Monitoring is not running."
+  severity: "High"
+  description: "Environment monitoring has experienced a fatal error during initialization and was unable to continue."
+  solution: "Collect the output of the show environment and debug ipmi commands. Record the message as it appears and contact the Cisco TAC."
+  category: "Firewall"
+  tactic: "Environment Monitoring"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Critical
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 735009
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP

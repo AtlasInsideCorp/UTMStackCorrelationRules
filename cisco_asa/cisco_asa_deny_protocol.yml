@@ -1,0 +1,22 @@
+- name: "Deny protocol reverse path."
+  severity: "High"
+  description: "An attack isin progress. This message appears when you have enabled Unicast RPF with the ip verify reverse-path command. This feature works on packets input to an interface; if it is configured on the outside, then the ASA checks packets arriving from the outside."
+  solution: "Even though an attack is in progress, if this feature is enabled, no user action is required. The ASA repels the attack."
+  category: "Firewall"
+  tactic: "User Session"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/security/asa/syslog/b_syslog/syslog1.html"
+  frequency: 360
+  cache:
+    - allOf:
+        - field: "logx.cisco_asa.severityLabel" 
+          operator: "=="
+          value: Alert
+        - field: "logx.cisco_asa.messageID"
+          operator: "=="
+          value: 106021
+      timeLapse: 7000
+      minCount: 1
+      save:
+        - field: "logx.cisco_asa.clientIP"
+          alias: SourceIP
