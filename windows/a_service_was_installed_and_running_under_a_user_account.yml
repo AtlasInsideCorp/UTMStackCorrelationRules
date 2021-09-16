@@ -1,0 +1,32 @@
+- name: "A service was installed in the system and running under a user account"
+  severity: "Low"
+  description: This event generates when a new service is installed in the system. Microsoft recommends reporting all "Service Account" not equals "localSystem", "localService" or "networkService" to identify services which are running under a user account
+  solution: |
+    "Limit privileges of user accounts and groups so that only authorized administrators can interact with service changes and service configurations. "
+  category: "Create or Modify System Process: Windows Service"
+  tactic: "Privilege Escalation"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4697"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4697
+      oneOf:
+        - field: "logx.wineventlog.event_data.ServiceAccount"
+          operator: "not contain"
+          value: "localSystem"
+        - field: "logx.wineventlog.event_data.ServiceAccount"
+          operator: "not contain"
+          value: "networkService"
+        - field: "logx.wineventlog.event_data.ServiceAccount"
+          operator: "not contain"
+          value: "localService"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

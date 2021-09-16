@@ -1,0 +1,32 @@
+- name: "A service was installed in the system, with almost unlimited access"
+  severity: "Low"
+  description: "This event generates when a new service is installed in the system. Microsoft recommends reporting all “Service Type” equals “0x1”, “0x2” or “0x8”. These service types start first and have almost unlimited access to the operating system from the beginning of the operating system startup. These types are very rarely installed."
+ solution: |
+    "Limit privileges of user accounts and groups so that only authorized administrators can interact with service changes and service configurations."
+  category: "Create or Modify System Process: Windows Service"
+  tactic: "Privilege Escalation"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4697"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4697
+      oneOf:
+        - field: "logx.wineventlog.event_data.ServiceType"
+          operator: "=="
+          value: "0x1"
+        - field: "logx.wineventlog.event_data.ServiceType"
+          operator: "=="
+          value: "0x2"
+        - field: "logx.wineventlog.event_data.ServiceType"
+          operator: "=="
+          value: "0x8"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

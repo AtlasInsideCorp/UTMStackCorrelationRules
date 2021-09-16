@@ -1,0 +1,23 @@
+- name: "System security access was removed from an account"
+  severity: "Low"
+  description: "This event generates every time local logon user right policy is changed and logon right was removed from an account"
+  solution: "Audit domain and local accounts as weel as their permission levels routinely to look for situations that could allow and adversary to gain wide access by obtaining credential of privileged account. Follow best practices for design and administration of an enterprise network to limint privileged account use across administrative tiers"
+  category: "Valid Accounts"
+  tactic: "Defence Evation"
+  reference:
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4718"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4718
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetSid"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

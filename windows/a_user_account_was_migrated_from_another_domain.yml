@@ -1,0 +1,26 @@
+- name: "A user account was migrated from another domain"
+  severity: "Low"
+  description: "This field will always be set to - unless the account was migrated from another domain"
+  solution: "This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of system features. "
+  category: "Permission Groups Discovery: Local Groups"
+  tactic: "Defense Evasion"
+  reference: 
+    - "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4720"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4720
+        - field: "logx.wineventlog.event_data.SidHistory"
+          operator: "!="
+          value: "-"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

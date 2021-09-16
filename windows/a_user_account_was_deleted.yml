@@ -1,0 +1,25 @@
+- name: "A user account was deleted"
+  severity: "Low"
+  description: "This event is generated every time a user object is deleted"
+  solution: "This type of attack technique cannot be easily mitigated with preventive controls since it is based on the abuse of system features. "
+  category: "Permission Groups Discovery: Local Groups"
+  tactic: "Discovery"
+  reference: 
+    - "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=4726"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4726
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"
+
+

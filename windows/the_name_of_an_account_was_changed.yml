@@ -1,0 +1,23 @@
+- name: "The name of an account was changed"
+  severity: "Low"
+  description: "This event generates every time a user or computer account name (sAMAccountName attribute) is changed"
+  solution: "Do not allow domain administrator accounts to be used for day to day operations that may expose them to potential adversaries on unprivileged systems"
+  category: "Account Manipulation"
+  tactic: "Persistence"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4781"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4781
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.NewTargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

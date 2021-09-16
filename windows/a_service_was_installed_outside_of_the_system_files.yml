@@ -1,0 +1,29 @@
+- name: "A service was installed outside of the system files (Program Files/Program Files (x86))"
+  severity: "Low"
+  description: "This event generates when a new service is installed in the system. Microsoft recommends monitoring for all events where “Service File Name” is not located in “Program Files/Program Files (x86)” folders"
+ solution: |
+    "Limit privileges of user accounts and groups so that only authorized administrators can interact with service changes and service configurations."
+  category: "Create or Modify System Process: Windows Service"
+  tactic: "Privilege Escalation"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4697"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4697
+      oneOf:
+        - field: "logx.wineventlog.event_data.ServiceFileName"
+          operator: "not contain"
+          value: "Program Files"
+        - field: "logx.wineventlog.event_data.ServiceFileName"
+          operator: "not contain"
+          value: "Program Files (x86)"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

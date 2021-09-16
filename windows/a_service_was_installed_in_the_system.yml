@@ -1,0 +1,22 @@
+- name: "A service was installed in the system"
+  severity: "Low"
+  description: "This event generates when new service was installed in the system. Microsoft recommends monitoring for this event, especially on high-value assets or computers, because a new service installation should be planned and expected. Unexpected service installation should trigger an alert"
+  solution: |
+    "Limit privileges of user accounts and groups so that only authorized administrators can interact with service changes and service configurations."
+  category: "Create or Modify System Process: Windows Service"
+  tactic: "Privilege Escalation"
+  reference: 
+    - "https://docs.microsoft.com/en-us/windows/security/threat-protection/auditing/event-4697"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4697
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"

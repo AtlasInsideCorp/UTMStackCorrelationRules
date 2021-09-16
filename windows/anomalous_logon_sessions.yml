@@ -1,0 +1,30 @@
+- name: "Anomalous logon sessions"
+  severity: "Medium"
+  description: "A caller cloned its current token and specified new credentials for outbound connections. The new logon session has the same local identity, but uses different credentials for other network connections"
+  solution: "Audit domain and local accounts as weel as their permission levels routinely to look for situations that could allow and adversary to gain wide access by obtaining credential of privileged account. Follow best practices for design and administration of an enterprise network to limint privileged account use across administrative tiers"
+  category: "Valid Accounts"
+  tactic: "Defence Evation"
+  reference: 
+    - "https://www.elastic.co/es/blog/how-attackers-abuse-access-token-manipulation"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.wineventlog.event_id"
+          operator: "=="
+          value: 4624
+        - field: "logx.wineventlog.event_data.LogonType"
+          operator: "=="
+          value: 9
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.wineventlog.event_data.IpAddress"
+          alias: "SourceIp"
+        - field: "logx.wineventlog.event_data.IpPort"
+          alias: "SourcePort"
+        - field: "logx.wineventlog.event_data.SubjectUserName"
+          alias: "SourceUser"
+        - field: "logx.wineventlog.event_data.TargetUserName"
+          alias: "DestinationUser"
+        - field: "logx.wineventlog.host.name"
+          alias: "SourceHost"
