@@ -1,0 +1,38 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Worm detection"
+  severity: "High"
+  description: "A computer worm is a program containing malicious code that attacks host computers and spreads via network. 
+                The basic difference between a virus and a worm is that worms have the ability to propagate by themselves; they are not dependant on host files (or boot sectors). 
+                Worms spread to email addresses in your contact list or exploit security vulnerabilities in network applications.
+                Worms are therefore much more viable than computer viruses. Due to the wide availability of the Internet, they can spread across the globe within hours or even minutes after their release. 
+                This ability to replicate independently and rapidly makes them more dangerous than other types of malware.
+                A worm activated in a system can cause a number of inconveniences: It can delete files, degrade system performance, or even deactivate programs. The nature of a computer worm qualifies it as a means of transport for other types of infiltrations."
+  solution: "Install anti-virus/malware software to keep your PC virus free. Keep your antivirus 
+             software up to date. Run regularly scheduled scans with your antivirus software. 
+             Keep your operating system up to date. Protect your red."
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Worm"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+    
+    

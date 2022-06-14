@@ -1,0 +1,40 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset probable potentially unwanted applications detection"
+  severity: "Medium"
+  description: "Grayware or Potentially Unwanted Application (PUA) is a broad category of software, 
+                whose intent is not as unequivocally malicious as with other types of malware, such as viruses or trojan horses. 
+                It may however install additional unwanted software, change the behavior of the digital device, or perform activities not approved or expected by the user.
+                Categories that may be considered grayware include: advertising display software, download wrappers, various browser toolbars, 
+                software with misleading behavior, bundleware, trackware, crypto-miners, registry cleaners (Windows operating systems only) or any other borderline software, 
+                or software that uses illicit or at least unethical business practices (despite appearing legitimate) 
+                and might be deemed undesirable by an end user who became aware of what the software would do if allowed to install.
+                A Potentially Unsafe Application is in itself legitimate (possibly commercial) software but which might be misused by an attacker."
+  solution: "Install anti-virus/malware software to keep your PC virus free. Keep your antivirus 
+             software up to date. Run regularly scheduled scans with your antivirus software. 
+             Keep your operating system up to date. Protect your red."
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "potentially unwanted application"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+    
+    

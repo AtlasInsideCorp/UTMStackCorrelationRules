@@ -1,0 +1,34 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset probable potentially unsafe applications detection"
+  severity: "High"
+  description: "Potentially unsafe applications is the classification used for commercial, legitimate software. 
+                This classification includes programs such as remote access tools, password-cracking applications, 
+                and keyloggers (a program that records each keystroke a user types)."
+  solution: "Install anti-virus/malware software to keep your PC virus free. Keep your antivirus 
+             software up to date. Run regularly scheduled scans with your antivirus software. 
+             Keep your operating system up to date. Protect your red."
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "potentially unsafe application"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+        

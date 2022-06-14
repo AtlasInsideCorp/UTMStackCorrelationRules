@@ -1,0 +1,39 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Botnet detection"
+  severity: "High"
+  description: "A bot, or a web robot is an automated malware program that scans blocks of network addresses and infects vulnerable computers. 
+                This allow hackers to take control of many computers at the same time and turn them into bots (also known as a zombie). 
+                Hackers typically use bots to infect large numbers of computers, which form a network or a botnet. 
+                Once the botnet is in your computer, it can be used in distributed denial of service (DDoS) attacks,
+                proxy and also can be used to perform automated tasks over the Internet, without you knowing it 
+                (for example sending spam, viruses or stealing personal and private information such as bank credentials or credit card numbers)."
+  solution: "Enable the firewall. Limit network sharing with other computers. Use data filtering. Secure our network with extra layers. 
+            Improve network monitoring. Have the system correctly updated. Use strong and complex passwords. 
+            When downloading from the Internet, it is one of the gateways for malware. 
+            You have to be careful in this regard and download only legitimate software and from official sites."
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Botnet"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+    
+    
