@@ -1,0 +1,32 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Adware detection"
+  severity: "High"
+  description: "Adware is a short for advertising-supported software. Programs displaying advertising material fall under this category.
+    Adware applications often automatically open a new pop-up window containing advertisements in an Internet browser, or change the browsers home page.
+    Adware is frequently bundled with freeware programs, allowing their creators to cover development costs of their (usually useful) applications.
+    Adware itself is not dangerous users will only be bothered with advertisements. Its danger lies in the fact that adware may also perform tracking functions (as spyware does)"
+  solution: "Download only from trusted sources. Use security tools. Keep systems and applications up to date. Keep an eye on the plugins we install"
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Adware"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"   

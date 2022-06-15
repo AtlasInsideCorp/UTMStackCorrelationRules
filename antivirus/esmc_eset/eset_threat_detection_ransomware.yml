@@ -1,0 +1,36 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset probable ransomware detection"
+  severity: "High"
+  description: "Ransomware, is a type of malware that prevents users from accessing their system or 
+                personal files and requires payment of a ransom in order to gain access to them again. Identifies 
+                ransomware attempts"
+  solution: "Keep your operating system and applications up to date
+    Create backups in case you fall prey to ransomware and cannot decrypt your files. Save the copies on an external hard drive and disconnect it from the computer each time you finish backing up the data.
+    Install antivirus applications and content filters for mail servers. These programs significantly reduce the risk of encountering messages with malicious attachments or links in your inbox.
+    Install an Internet security solution. This type of software provides real-time protection by blocking any infected files that you try to view or download.
+    Avoid links you find in spam emails or on websites you don't know.
+    Do not download files from unknown sources."
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Ransomware"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"

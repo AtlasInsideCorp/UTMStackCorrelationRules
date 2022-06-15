@@ -1,0 +1,39 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Trojan detection"
+  severity: "High"
+  description: "Trojans are a type of malicious software that disguises itself to hide its true intentions. 
+                However, unlike viruses, it cannot spread or infect files on its own. 
+                To infiltrate a victim's device, this category of malware relies on other means, such as drive-by downloads,
+                exploiting vulnerabilities, downloading by other malicious code, or social engineering techniques. "
+  solution: "Download and install an updated antivirus. 
+    Disconnect from the internet whether you use an ADSL modem, a network card or a Wi-Fi card. 
+    Open your internet browser and clear the cache and cookies. 
+    To keep your Internet connection as secure as possible, always use a firewall. 
+    Both software and hardware firewalls are great at controlling malicious Internet traffic 
+    and can often prevent Trojans from downloading to your computer in the first place."
+  category: "Execution"
+  tactic: "User Execution"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0002/"
+    - "https://attack.mitre.org/techniques/T1204/002/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Trojan"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+    
+    

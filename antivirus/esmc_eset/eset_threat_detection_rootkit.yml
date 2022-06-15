@@ -1,0 +1,39 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Rootkit detection"
+  severity: "Medium"
+  description: "Rootkits are malicious programs that grant Internet attackers unlimited access to a system, while concealing their presence. 
+                Rootkits, after accessing a system (usually exploiting a system vulnerability), 
+                use functions in the operating system to avoid detection by antivirus software: they conceal processes, files and Windows registry data. 
+                For this reason, it is almost impossible to detect them using ordinary testing techniques."
+  solution: "Read the email twice and note the grammar used in an email before clicking on any links. Phishing email is one of the attacker's favorite weapons. 
+            The phishing email causes it to download packages that come with rootkits onto your computer. 
+            You should always verify the sender's header and email address before clicking on any link. 
+            Also, you should read the email twice as the phishing email has grammatical errors.
+            Download authorized computer drivers. Computer drivers are the most common entry point for a rootkit on the target system. 
+            Therefore, you should always use only an authorized computer driver.
+            Update the OS, browser, and security software. These points may not look the best or may seem illogical. 
+            But the user must keep their operating system, browser and anti-rootkit security software up to date to avoid a rootkit attack."
+  category: "Impact"
+  tactic: "Data Manipulation"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1565/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Rootkit"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"

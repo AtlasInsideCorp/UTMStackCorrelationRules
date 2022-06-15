@@ -1,0 +1,39 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Spyware detection"
+  severity: "High"
+  description: "This category covers all applications which send private information without user consent/awareness. 
+                Spyware uses tracking functions to send various statistical data such as a list of visited websites, email addresses from the users contact list, or a list of recorded keystrokes.
+                The authors of spyware claim that these techniques aim to find out more about users needs and interests and allow better-targeted advertisement. 
+                The problem is that there is no clear distinction between useful and malicious applications and no one can be sure that the retrieved information will not be misused. 
+                The data obtained by spyware applications may contain security codes, PINs, bank account numbers, etc. 
+                Spyware is often bundled with free versions of a program by its author in order to generate revenue or to offer an incentive for purchasing the software. 
+                Often, users are informed of the presence of spyware during a programs installation to give them an incentive to upgrade to a paid version without it."
+  solution: "Install anti-virus/malware software to keep your PC virus free. Keep your antivirus 
+             software up to date. Run regularly scheduled scans with your antivirus software. 
+             Keep your operating system up to date. Protect your red."
+  category: "Reconnaissance"
+  tactic: "Active Scanning"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0043/"
+    - "https://attack.mitre.org/techniques/T1595/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Spyware"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+    
+    

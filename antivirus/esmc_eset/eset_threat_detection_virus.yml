@@ -1,0 +1,40 @@
+#Based in https://help.eset.com/protect_cloud/es-ES/events-exported-to-json-format.html
+#And https://underdefense.com/guides/splunk-add-on-for-eset-remote-administrator/
+#And https://help.eset.com/glossary/en-US/unwanted_application.html
+# Rule version v1.0.0
+
+- name: "Eset Probable Virus detection"
+  severity: "High"
+  description: "A computer virus is a piece of malicious code that is prepended or appended to existing files on your computer. 
+                Viruses are named after biological viruses because they use similar techniques to spread from one place to another. 
+                Virus is often misused to refer to any threat. This usage is gradually being replaced with a more accurate term, malware (malicious software).
+                Computer viruses primarly attack executable files and documents. In short, this is how a computer virus works: 
+                after running the infected file, the malicious code is called and executed prior to the execution of the original application. 
+                A virus can infect any files that the current user has write permissions for.
+                Computer viruses can range in purpose and severity. Some of them are extremely dangerous because of their ability to delete files purposely from the hard drive. 
+                On the other hand, some viruses do not cause any damage they only serve to annoy the user and demonstrate the technical skills of their authors."
+  solution: "Install anti-virus/malware software to keep your PC virus free. Keep your antivirus 
+             software up to date. Run regularly scheduled scans with your antivirus software. 
+             Keep your operating system up to date. Protect your red."
+  category: "Execution"
+  tactic: "User Execution"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0002/"
+    - "https://attack.mitre.org/techniques/T1204/002/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.esmc_eset.threat_type"
+          operator: "::"
+          value: "Virus"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.esmc_eset.username"
+          alias: "SourceUser"
+        - field: "logx.esmc_eset.hostname"
+          alias: "SourceHost"
+        - field: "logx.esmc_eset.src_ip"
+          alias: "SourceIP"
+    
+    
