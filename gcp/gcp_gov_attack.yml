@@ -1,0 +1,35 @@
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#and https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP probable Government-backed attack"
+  severity: "High"
+  description: "A user's account might have been targeted by government-backed attack. 
+                Government-backed attackers are trying to access the account of one of your users. 
+                An attack happens to less than 0.1% of all Google Account users. There's a chance the alert is 
+                a false alarm. However, we believe we detected activities that government-backed attackers use 
+                to try to steal a password or other personal information. Such activity includes the user receiving 
+                an email containing a harmful attachment, links to malicious software downloads, or links to fake 
+                websites that are designed to access passwords."
+  solution: "Secure users account:<ol>
+             <li>Reset the password of any account with suspicious activity.</li> 
+             <li>We recommend adding and enrolling the user in 2-Step Verification.</li> 
+             <li>Ask the user to take additional steps to secure their account.</li>
+             <li>See the logs attached to this alert for more information.</li></ol>"
+  category: "Collection"
+  tactic: "Archive Collected Data"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0009/"
+    - "https://attack.mitre.org/techniques/T1560"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "in"
+          value: "google.login.LoginService.govAttackWarning"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

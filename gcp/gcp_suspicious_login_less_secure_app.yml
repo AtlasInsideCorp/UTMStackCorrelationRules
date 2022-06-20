@@ -1,0 +1,26 @@
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#and https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP suspicious login from less secure app"
+  severity: "Medium"
+  description: "Less secure apps (LSAs) are non-Google apps that can access your Google account with only a username and password. 
+                They make your account more vulnerable to hijacking attempts."
+  solution: "Instead of LSAs, you can use apps that support OAuth—a modern and secure access method."
+  category: "Initial Access"
+  tactic: "Exploit Public-Facing Application"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0001/"
+    - "https://attack.mitre.org/techniques/T1190"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "=="
+          value: "google.login.LoginService.suspiciousLoginLessSecureApp"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

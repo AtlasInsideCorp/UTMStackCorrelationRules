@@ -1,0 +1,43 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:google.pubsub.v*.Subscriber.CreateSubscription and event.outcome:success
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/collection_gcp_pub_sub_subscription_creation.toml (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP probable Collection, Pub/Sub Subscription Creation"
+  severity: "Low"
+  description: "Collection consists of techniques adversaries may use to gather information and the sources information is collected 
+                from that are relevant to following through on the adversary's objectives. Frequently, the next goal after collecting 
+                data is to steal (exfiltrate) the data. Common target sources include various drive types, browsers, audio, video, and 
+                email. Common collection methods include capturing screenshots and keyboard input. <br> 
+                Identifies the creation of a subscription in Google Cloud Platform (GCP). In GCP, the publisher-subscriber relationship 
+                (Pub/Sub) is an asynchronous messaging service that decouples event-producing and event-processing services. A 
+                subscription is a named resource representing the stream of messages to be delivered to the subscribing application."
+  solution: "<ol>
+    <li>Verify whether the user email, resource name, and/or hostname should be making changes in your environment.</li>
+    <li>See the logs attached to this alert for more information.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Subscription creations may be done by a system or network administrator.
+    Subscription creations by unfamiliar users or hosts should be investigated."
+  category: "Collection"
+  tactic: "Data from Cloud Storage Object"
+  reference: 
+    - "https://cloud.google.com/pubsub/docs/overview"
+    - "https://attack.mitre.org/tactics/TA0009/"
+    - "https://attack.mitre.org/techniques/T1530/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "((.+)?subscription(s)?\\.create|(.+)?v(\\w+)\\.Subscriber\\.CreateSubscription)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

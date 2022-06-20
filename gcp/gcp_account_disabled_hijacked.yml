@@ -1,0 +1,30 @@
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#and https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP probable hijacked account"
+  severity: "High"
+  description: "A user's account was disabled disabled because Google has detected a suspicious activity 
+                indicating it might have been compromised.
+                Hijacked account can be used to perform other attacks like data collection and exfiltration"
+  solution: "Contact your cloud administrator to enable the account.
+             Use multi-factor authentication. Where possible, also enable multi-factor authentication on externally facing services.
+             Refer to NIST guidelines when creating password policies.
+             See the logs attached to this alert for more information."
+  category: "Collection"
+  tactic: "Archive Collected Data"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0009/"
+    - "https://attack.mitre.org/techniques/T1560"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "=="
+          value: "google.login.LoginService.accountDisabledHijacked"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

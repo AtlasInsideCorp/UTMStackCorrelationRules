@@ -1,0 +1,44 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:google.iam.admin.v*.DeleteRole and event.outcome:success
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/impact_gcp_iam_role_deletion.toml (may, 2022)
+#https://cloud.google.com/iam/docs/reference/rest/v1/projects.roles/delete
+#Rule version v1.0.0
+
+- name: "GCP probable Impact, IAM Role Deletion"
+  severity: "Low"
+  description: "Impact consists of techniques that adversaries use to disrupt availability or compromise integrity by manipulating business 
+                and operational processes. Techniques used for impact can include destroying or tampering with data. In some cases, business 
+                processes can look fine, but may have been altered to benefit the adversaries goals. These techniques might be used by 
+                adversaries to follow through on their end goal or to provide cover for a confidentiality breach. <br> 
+                Identifies an Identity and Access Management (IAM) role deletion in Google Cloud Platform (GCP). A role contains a set 
+                of permissions that allows you to perform specific actions on Google Cloud resources. An adversary may delete an IAM 
+                role to inhibit access to accounts utilized by legitimate users."
+  solution: "<ol>
+    <li>Verify whether the user email, resource name, and/or hostname should be making changes in your environment.</li>
+    <li>See the logs attached to this alert for more information.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Role deletions may be done by a system or network administrator. 
+    Role deletions by unfamiliar users or hosts should be investigated."
+  category: "Impact"
+  tactic: "Account Access Removal"
+  reference: 
+    - "https://cloud.google.com/iam/docs/understanding-roles"
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1531/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "(((.+)\\.)?role(s)?.delete|(.+)?iam\\.admin\\.v(\\w+)\\.DeleteRole)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

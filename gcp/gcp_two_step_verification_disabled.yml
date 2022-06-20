@@ -1,0 +1,28 @@
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#and https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP 2-step verification disabled"
+  severity: "High"
+  description: "Google Cloud has detected that 2-step verification was disabled for the organization or a user"
+  solution: "Contact your cloud administrator to determine why 2-step verification was disabled.
+             We recomend to enable it again. See the logs attached to this alert for more information"
+  category: "Defense Evasion"
+  tactic: "Impair Defenses"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0005"
+    - "https://attack.mitre.org/techniques/T1562/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "=="
+          value: "google.login.LoginService.2svDisable"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

@@ -1,0 +1,26 @@
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#and https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP suspicious login blocked"
+  severity: "High"
+  description: "A suspicious login to a user's account was detected and blocked by Google Cloud."
+  solution: "See the logs attached to this alert to determine why the account was blocked.
+             Contact your cloud administrator to further actions"
+  category: "Initial Access"
+  tactic: "Valid Accounts"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0001/"
+    - "https://attack.mitre.org/techniques/T1078"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "=="
+          value: "google.login.LoginService.suspiciousLogin"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

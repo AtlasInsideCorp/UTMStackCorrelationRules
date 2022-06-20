@@ -1,0 +1,44 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:v*.compute.firewalls.patch
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/defense_evasion_gcp_firewall_rule_modified.toml (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP probable Defense Evasion, Firewall Rule Modification"
+  severity: "Medium"
+  description: "Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. 
+                Techniques used for defense evasion include uninstalling/disabling security software or 
+                obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes 
+                to hide and masquerade their malware. Other tactics are cross-listed here when those techniques 
+                include the added benefit of subverting defenses. <br> 
+                Identifies when a firewall rule is modified in Google Cloud Platform (GCP). Virtual Private Cloud (VPC) firewall rules
+                can be configured to allow or deny connections to or from virtual machine (VM) instances. An adversary may modify a
+                firewall rule in order to weaken their target's security controls."
+  solution: "<ol>
+    <li>Ensure proper process and file permissions are in place to prevent adversaries from disabling or interfering with security/logging services.</li>
+    <li>Ensure proper Registry permissions are in place to prevent adversaries from disabling or interfering with security/logging services.</li>
+    <li>Ensure proper user permissions are in place to prevent adversaries from disabling or interfering with security/logging services.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Firewall rules may be modified by system administrators. Verify that the firewall configuration change was expected."
+  category: "Defense Evasion"
+  tactic: "Impair Defenses"
+  reference: 
+    - "https://cloud.google.com/vpc/docs/firewalls"
+    - "https://attack.mitre.org/techniques/T1562/"
+    - "https://attack.mitre.org/tactics/TA0005/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "((.+)?v(\\w+)(\\.compute\\.firewalls\\.patch)|(.+)?(compute\\.v(\\w+)\\.firewalls\\.patch)|(.+)?beta(\\w+)?(\\.compute\\.firewalls\\.patch)|(.+)?(compute\\.beta(\\w+)?\\.firewalls\\.patch))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

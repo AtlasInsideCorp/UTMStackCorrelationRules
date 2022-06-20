@@ -1,0 +1,43 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:"storage.buckets.update" and event.outcome:success
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/defense_evasion_gcp_storage_bucket_configuration_modified.toml (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP probable Defense Evasion, Storage Bucket Configuration Modification"
+  severity: "Medium"
+  description: "Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. 
+                Techniques used for defense evasion include uninstalling/disabling security software or 
+                obfuscating/encrypting data and scripts. Adversaries also leverage and abuse trusted processes 
+                to hide and masquerade their malware. Other tactics are cross-listed here when those techniques 
+                include the added benefit of subverting defenses. <br> 
+                Identifies when the configuration is modified for a storage bucket in Google Cloud Platform (GCP). An adversary may 
+                modify the configuration of a storage bucket in order to weaken the security controls of their target's environment."
+  solution: "<ol>
+    <li>Verify that the configuration change was expected.</li>
+    <li>See the logs attached to this alert for more information.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Storage bucket configuration may be modified by system administrators. 
+    Storage bucket configuration modifications, made by unfamiliar users or hosts should be investigated."
+  category: "Defense Evasion"
+  tactic: "Impair Defenses"
+  reference: 
+    - "https://cloud.google.com/logging/docs/buckets"
+    - "https://attack.mitre.org/techniques/T1562/"
+    - "https://attack.mitre.org/tactics/TA0005/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "((.+)\\.bucket(s)?\\.update|(.+)\\.bucket(s)?\\.patch)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

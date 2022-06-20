@@ -1,0 +1,44 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:google.iam.admin.v*.CreateRole and event.outcome:success
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/initial_access_gcp_iam_custom_role_creation.toml (may, 2022)
+#https://cloud.google.com/iam/docs/reference/rest/v1/projects.roles/create
+#Rule version v1.0.0
+
+- name: "GCP probable Initial Access, IAM Role Creation"
+  severity: "Medium"
+  description: "Initial Access consists of techniques that use various entry vectors to gain their initial foothold within a network. 
+                Techniques used to gain a foothold include targeted spearphishing and exploiting weaknesses on public-facing web servers. 
+                Footholds gained through initial access may allow for continued access, like valid accounts and use of external remote services, 
+                or may be limited-use due to changing passwords. <br> 
+                Identifies an Identity and Access Management (IAM) custom role creation in Google Cloud Platform (GCP). Custom roles are 
+                user-defined, and allow for the bundling of one or more supported permissions to meet specific needs. Custom roles will 
+                not be updated automatically and could lead to privilege creep if not carefully scrutinized."
+  solution: "<ol>
+    <li>Verify whether the user email, resource name, and/or hostname should be making changes in your environment.</li>
+    <li>See the logs attached to this alert for more information.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Custom role creations may be done by a system or network administrator. 
+    Role creations by unfamiliar users or hosts should be investigated."
+  category: "Initial Access"
+  tactic: "Valid Accounts"
+  reference: 
+    - "https://cloud.google.com/iam/docs/understanding-roles"
+    - "https://attack.mitre.org/tactics/TA0001/"
+    - "https://attack.mitre.org/techniques/T1078/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "(((.+)\\.)?role(s)?.create|(.+)?iam\\.admin\\.v(\\w+)\\.CreateRole)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

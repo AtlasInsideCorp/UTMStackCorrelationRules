@@ -1,0 +1,44 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:v*.compute.routes.delete and event.outcome:success
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/impact_gcp_virtual_private_cloud_route_deleted.toml (may, 2022)
+#https://cloud.google.com/compute/docs/reference/rest/v1/routes/insert
+#Rule version v1.0.0
+
+- name: "GCP probable Impact, Virtual Private Cloud Route Deletion"
+  severity: "Medium"
+  description: "Impact consists of techniques that adversaries use to disrupt availability or compromise integrity by manipulating business 
+                and operational processes. Techniques used for impact can include destroying or tampering with data. In some cases, business 
+                processes can look fine, but may have been altered to benefit the adversaries goals. These techniques might be used by 
+                adversaries to follow through on their end goal or to provide cover for a confidentiality breach. <br> 
+                Identifies when a virtual private cloud (VPC) route is deleted in Google Cloud Platform (GCP). Google Cloud routes 
+                define the paths that network traffic takes from a virtual machine (VM) instance to other destinations. These 
+                destinations can be inside a Google VPC network or outside it. An adversary may delete a route in order to impact the 
+                flow of network traffic in their target's cloud environment."
+  solution: "<ol>
+    <li>Verify that the configuration change was expected.</li>
+    <li>See the logs attached to this alert for more information.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Virtual Private Cloud routes may be deleted by system administrators."
+  category: "Impact"
+  tactic: "Stop Service"
+  reference: 
+    - "https://cloud.google.com/vpc/docs/routes"
+    - "https://attack.mitre.org/tactics/TA0040/"
+    - "https://attack.mitre.org/techniques/T1489"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "^((.+)\\.)?route(s)?\\.delete$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

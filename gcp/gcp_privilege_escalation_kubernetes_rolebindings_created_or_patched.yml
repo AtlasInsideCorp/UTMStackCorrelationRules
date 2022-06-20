@@ -1,0 +1,50 @@
+# Original query
+#event.dataset:(googlecloud.audit or gcp.audit) and event.action:(io.k8s.authorization.rbac.v*.clusterrolebindings.create or 
+#io.k8s.authorization.rbac.v*.rolebindings.create or io.k8s.authorization.rbac.v*.clusterrolebindings.patch or 
+#io.k8s.authorization.rbac.v*.rolebindings.patch) and event.outcome:success and
+#not gcp.audit.authentication_info.principal_email:"system:addon-manager"
+
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#https://github.com/elastic/detection-rules/blob/main/rules/integrations/gcp/privilege_escalation_gcp_kubernetes_rolebindings_created_or_patched.toml (may, 2022)
+#https://unofficial-kubernetes.readthedocs.io/en/latest/admin/authorization/rbac/
+#Rule version v1.0.0
+
+- name: "GCP probable Privilege Escalation, Kubernetes role bindings created or patched"
+  severity: "Medium"
+  description: "Privilege Escalation consists of techniques that adversaries use to gain higher-level permissions on a system or network. 
+                Adversaries can often enter and explore a network with unprivileged access but require elevated permissions to follow through 
+                on their objectives. Common approaches are to take advantage of system weaknesses, misconfigurations, and vulnerabilities.<br> 
+                Identifies the creation or patching of potentially malicious role bindings. Users can use role bindings and cluster role 
+                bindings to assign roles to Kubernetes subjects (users, groups, or service accounts)."
+  solution: "<ol>
+    <li>Verify whether the user email, resource name, and/or hostname should be making changes in your environment.</li>
+    <li>See the logs attached to this alert for more information.</li>
+    </ol><br>
+    <strong>Potential false positive: </strong> Kubernates role bindings modifications may be done by a system or network administrator."
+  category: "Privilege Escalation"
+  tactic: "Abuse Elevation Control Mechanism"
+  reference: 
+    - "https://cloud.google.com/kubernetes-engine/docs/how-to/role-based-access-control"
+    - "https://attack.mitre.org/tactics/TA0004/"
+    - "https://attack.mitre.org/techniques/T1548"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "contains"
+          value: ".rbac"
+        - field: "logx.google.protoPayload.methodName"
+          operator: "regexp"
+          value: "((.+)\\.)?(cluster)?rolebinding(s)?\\.(create|patch)$"
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          operator: "!="
+          value: "system:addon-manager"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.google.protoPayload.authenticationInfo.principalEmail"
+          alias: "SourceUser"
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"

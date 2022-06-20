@@ -1,0 +1,26 @@
+#Based on https://cloud.google.com/security-command-center/docs/how-to-use-event-threat-detection (may, 2022)
+#https://cloud.google.com/security-command-center/docs/concepts-event-threat-detection-overview (may, 2022)
+#and https://cloud.google.com/logging/docs/audit/gsuite-login-samples (may, 2022)
+#Rule version v1.0.0
+
+- name: "GCP account is probably used for spamming"
+  severity: "High"
+  description: "A user's account was disabled because Google has become aware that it was used to engage in spamming.
+                Usually, spamming is used to perform other attacks like phishing or spread malware"
+  solution: "See the logs attached to this alert for more information."
+  category: "Initial Access"
+  tactic: "Phishing"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0001"
+    - "https://attack.mitre.org/techniques/T1566/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.google.protoPayload.methodName"
+          operator: "in"
+          value: "google.login.LoginService.accountDisabledSpamming,google.login.LoginService.accountDisabledSpammingThroughRelay"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.google.src_ip"
+          alias: "SourceIp"
