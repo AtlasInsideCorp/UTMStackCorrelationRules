@@ -1,0 +1,43 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable threat detected by Wildfire in Palo Alto Firewall"
+  severity: "High"
+  description: "A WildFire verdict generated when the firewall submits a file to WildFire per a WildFire Analysis profile and a verdict 
+               (malware, phishing, grayware, or benign, depending on what you are logging) is logged in the WildFire Submissions log."
+  solution: "<ol>
+             <li>Check your Security Profiles configuration in the Firewall</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Threat detection"
+  tactic: ""
+  reference: 
+    - "https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/threat-prevention"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(THREAT|GLOBALPROTECT)$"
+      oneOf:
+        - field: "logx.paloalto_fw.cat"
+          operator: "regexp"
+          value: "^(WILDFIRE|Wildfire|wildfire)$"
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(WILDFIRE|Wildfire|wildfire)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

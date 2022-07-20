@@ -1,0 +1,43 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable malicious mobile access denied by Palo Alto Firewall"
+  severity: "High"
+  description: "GTP has detected a probable malicious access from mobile network infrastructure. 
+                GTP security on Palo Alto Networks firewalls allows you to protect the mobile core 
+                network infrastructure from malformed GTP packets, denial of service attacks, 
+                and out-of-state GTP messages, and also allows you to protect mobile subscribers 
+                from spoofed IP packets and overbilling attacks."
+  solution: "<ol>
+             <li>Check your GTP configuration in the Firewall</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Threat detection"
+  tactic: ""
+  reference: 
+    - "https://docs.paloaltonetworks.com/service-providers/10-2/mobile-network-infrastructure-getting-started/gtp"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(GTP)$"
+      oneOf:
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(Deny|deny|DENY|DENIED|Denied|denied)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

@@ -1,0 +1,51 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable access through vpn or sslvpn detected by Palo Alto Firewall"
+  severity: "High"
+  description: "The firewall has detected an access using vpn or sslvpn. It's easy to exhaust resources on VPNs and associated firewalls, 
+               even with a low volume distributed denial of service (DDoS) attack. Attackers can send a small amount of Transmission Control 
+               Protocol (TCP) packets with the SYN flag checked, another batch of TCP packets with the ACK flag, and another set with the URG 
+               flag, and so on to bring down your network firewalls until they can no longer handle any new connections. These DDoS attacks are 
+               difficult to detect because they don't trigger the volume threshold of VPN connections.
+               Additionally, Secure Sockets Layer (SSL) VPNs are vulnerable to SSL flood attacks just like your web servers; in this type of attack, 
+               the attackers try to exhaust the VPN server resources using a high volume of SSL handshake requests."
+  solution: "<ol>
+             <li>Monitor VPN connections on different devices and tune thresholds accurately to capture abnormal activities.</li>
+             <li>Check your Zone Protection and DoS Protection configuration in the Firewall.</li>
+             <li>Check your Authentication configuration in the Firewall, use multifactor authentication to protect sensitive services and applications.</li>
+             <li>Check if it is an allowed access to the network or part of an attack.</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Impact"
+  tactic: "Denial of Service (DoS)"
+  reference: 
+    - "https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/zone-protection-and-dos-protection"
+    - "https://docs.paloaltonetworks.com/content/techdocs/en_US/pan-os/10-2/pan-os-admin/authentication.html"
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://attack.mitre.org/techniques/T1499/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(AUTHENTICATION)$"
+      oneOf:
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(SSLVPN|Sslvpn|sslvpn|VPN|Vpn|vpn)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

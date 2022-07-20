@@ -1,0 +1,48 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable spyware attack detected by Palo Alto Firewall"
+  severity: "High"
+  description: "Spyware is a malicious software designed to enter your computer device, gather data about you, 
+                and forward it to a third-party without your consent. Spyware can also refer to legitimate software 
+                that monitors your data for commercial purposes like advertising. However, malicious spyware is 
+                explicitly used to profit from stolen data.
+                Spyware detected via an Anti-Spyware profile"
+  solution: "<ol>
+             <li>Check your Security Profiles configuration in the Firewall</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Reconnaissance"
+  tactic: "Gather Victim Org Information"
+  reference: 
+    - "https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/policy/security-profiles"
+    - "https://attack.mitre.org/tactics/TA0043"
+    - "https://attack.mitre.org/techniques/T1591/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(THREAT|GLOBALPROTECT)$"
+      oneOf:
+        - field: "logx.paloalto_fw.cat"
+          operator: "regexp"
+          value: "^(SPYWARE|Spyware|spyware)$"
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(SPYWARE|Spyware|spyware)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

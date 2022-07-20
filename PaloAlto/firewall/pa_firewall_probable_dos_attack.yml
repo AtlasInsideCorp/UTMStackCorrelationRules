@@ -1,0 +1,45 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable Dos Attack detected by Palo Alto Firewall"
+  severity: "High"
+  description: "A Denial of Service (DoS) attack is an attempt to make a machine or network resource unavailable to the intended users.
+                One common method of attack involves saturating the target machine with external communications requests so that it cannot
+                respond to legitimate traffic or the machine responds so slowly that it is essentially useless."
+  solution: "<ol>
+             <li>Check your Zone Protection and DoS Protection configuration in the Firewall.</li>
+             <li>Check your Authentication configuration in the Firewall, use multifactor authentication to protect sensitive services and applications.</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Impact"
+  tactic: "Denial of Service (DoS)"
+  reference: 
+    - "https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/zone-protection-and-dos-protection"
+    - "https://docs.paloaltonetworks.com/content/techdocs/en_US/pan-os/10-2/pan-os-admin/authentication.html"
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://attack.mitre.org/techniques/T1499/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(AUTHENTICATION)$"
+      oneOf:
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(DOS|Dos|dos)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

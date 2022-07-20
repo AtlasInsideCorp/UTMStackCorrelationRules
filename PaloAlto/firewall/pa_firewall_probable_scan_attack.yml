@@ -1,0 +1,46 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable scan attack detected by Palo Alto Firewall"
+  severity: "High"
+  description: "Adversaries may scan victim IP blocks to gather information that can be used during targeting. Public IP addresses may be allocated to organizations by block, or a range of sequential addresses.
+                Adversaries may scan IP blocks in order to Gather Victim Network Information, such as which IP addresses are actively in use as well as more detailed information about hosts assigned these addresses.
+                Scan detected via a Zone Protection profile."
+  solution: "<ol>
+             <li>Check your Zone Protection and DoS Protection configuration in the Firewall</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Reconnaissance"
+  tactic: "Active Scanning: Scanning IP Blocks"
+  reference: 
+    - "https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/zone-protection-and-dos-protection"
+    - "https://attack.mitre.org/tactics/TA0043"
+    - "https://attack.mitre.org/techniques/T1595/001/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(THREAT|GLOBALPROTECT)$"
+      oneOf:
+        - field: "logx.paloalto_fw.cat"
+          operator: "regexp"
+          value: "^(SCAN|Scan|scan)$"
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(SCAN|Scan|scan)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

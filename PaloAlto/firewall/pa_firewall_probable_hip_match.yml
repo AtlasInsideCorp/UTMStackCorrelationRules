@@ -1,0 +1,40 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable HIP-match detected by Palo Alto Firewall"
+  severity: "High"
+  description: "The GlobalProtect Host Information Profile (HIP) matching enables 
+               you to collect information about the security status of the end devices accessing 
+               your network (such as whether they have disk encryption enabled). The firewall can 
+               allow or deny access to a specific host based on adherence to the HIP-based security 
+               rules you define. HIP Match logs display traffic flows that match a HIP Object or HIP 
+               Profile that you configured for the rules."
+  solution: "<ol>
+             <li>Check your HIP-match configuration in the Firewall</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Threat detection"
+  tactic: ""
+  reference: 
+    - "https://docs.paloaltonetworks.com/globalprotect/10-1/globalprotect-admin/host-information/configure-hip-based-policy-enforcement"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(HIP-MATCH)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"

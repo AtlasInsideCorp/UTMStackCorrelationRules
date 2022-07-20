@@ -1,0 +1,45 @@
+# Rule version v1.0.0
+# From https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/monitoring/use-syslog-for-monitoring/syslog-field-descriptions (july, 2022)
+
+- name: "Probable url threat detected by Palo Alto Firewall"
+  severity: "High"
+  description: "Adversaries may use web-based threats like credential theft, phishing or malicious JavaScript 
+                to gain access to your data, system and perform other attacks."
+  solution: "<ol>
+             <li>Check your URL Filtering configuration in the Firewall</li>
+             <li>See the logs attached to this alert for more information.</li>
+             </ol>"
+  category: "Initial Access"
+  tactic: "Phishing"
+  reference: 
+    - "https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-admin/policy/security-profiles"
+    - "https://attack.mitre.org/tactics/TA0001"
+    - "https://attack.mitre.org/techniques/T1566/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.paloalto_fw.pa_type"
+          operator: "regexp"
+          value: "^(THREAT|GLOBALPROTECT)$"
+      oneOf:
+        - field: "logx.paloalto_fw.cat"
+          operator: "regexp"
+          value: "^(URL|Url|url)$"
+        - field: "logx.paloalto_fw.pa_subtype"
+          operator: "regexp"
+          value: "^(URL|Url|url)$"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.paloalto_fw.suser"
+          alias: "SourceUser"
+        - field: "logx.paloalto_fw.duser"
+          alias: "DestinationUser"
+        - field: "logx.paloalto_fw.src_port"
+          alias: "SourcePort"
+        - field: "logx.paloalto_fw.dest_port"
+          alias: "DestinationPort"
+        - field: "logx.paloalto_fw.src_ip"
+          alias: "SourceIP"
+        - field: "logx.paloalto_fw.dest_ip"
+          alias: "DestinationIP"
