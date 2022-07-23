@@ -1,0 +1,31 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable Ping of the Death attack, detected by CISCO IOS"
+  severity: "High"
+  description: "Ping of death attack (PoD) is a kind of denial of service attack (DoS), where the aggressor attempt to destabilize an objective machine sending a bigger packet than the maximum allowed size, provoking that the objective machine freeze itself or stop working."
+  solution: "This indicates a denial of service attack. It is likely that the source address has been spoofed making shunning ineffective. See the logs attached to this alert and URLs below for more information."
+  category: "Impact"
+  tactic: "Denial of Service (DoS)"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://attack.mitre.org/techniques/T1499/"
+    - "https://www.cloudflare.com/es-es/learning/ddos/ping-of-death-ddos-attack/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(IDS)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|ICMP_PING_OF_DEATH_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(Ping of Death Attack)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

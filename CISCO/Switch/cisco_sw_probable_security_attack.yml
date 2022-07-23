@@ -1,0 +1,29 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable security attack, detected by CISCO IOS"
+  severity: "Medium"
+  description: "LU-LU verification failed. The partner LU has sent an incorrect response to a challenge sent by a local LU. This is either a mismatch in configuration or a security attack. Session activation will fail."
+  solution: "See the logs attached to this alert and check the identity of the partner LU. If this is a mismatch in configuration then reconfigure the password either at the local LU or at the partner LU (or at both LUs), so that both LUs have the same password. 
+             See the URL below for more information."
+  category: "Threat Protection"
+  tactic: ""
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(SNASW)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(LU-LU verification (protocol\\s)?(failed|mismatch))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

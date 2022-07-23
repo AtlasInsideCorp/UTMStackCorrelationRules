@@ -1,0 +1,31 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable replay attack, detected by CISCO IOS"
+  severity: "High"
+  description: "A replay attack occurs when a cybercriminal eavesdrops on a secure network communication, intercepts it, and then fraudulently delays or resends it to misdirect the receiver into doing what the hacker wants. The added danger of replay attacks is that a hacker doesn't even need advanced skills to decrypt a message after capturing it from the network. The attack could be successful simply by resending the whole thing."
+  solution: "We recommend you to investigate the reason the event was generated. Your network may be under attack and the
+             source should be shunned until you verify. Check the logs attached to this alert for more information"
+  category: "Impact"
+  tactic: "Replay attack"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://www.kaspersky.com/resource-center/definitions/replay-attack"
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(CRYPTO|RSVP|TIDP)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|BAD_RSVP_MSG_RCVD_AUTH_DUP|BAD_RSVP_MSG_RCVD_AUTH_WIN|REPLAYMSG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "((connection id=(.+), (.+) number=)|(Unexpected message from (.+) received)|(message from (.+) discarded))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

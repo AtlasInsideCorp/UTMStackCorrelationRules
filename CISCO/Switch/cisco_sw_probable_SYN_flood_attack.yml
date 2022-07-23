@@ -1,0 +1,35 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable SYN Flood attack, detected by CISCO IOS"
+  severity: "High"
+  description: "A SYN flood (half-open attack) is a type of denial-of-service (DDoS) attack which aims to make a 
+                server unavailable to legitimate traffic by consuming all available server resources. By repeatedly 
+                sending initial connection request (SYN) packets, the attacker is able to overwhelm all available 
+                ports on a targeted server machine, causing the targeted device to respond to legitimate traffic 
+                sluggishly or not at all."
+  solution: "Check the logs attached to this alert to verify if is a device malfunction, strict configuration or is part of an attack. 
+             See the URLs below for more information"
+  category: "Impact"
+  tactic: "SYN Flood attack"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://www.cloudflare.com/learning/ddos/syn-flood-ddos-attack/"
+    - "https://attack.mitre.org/techniques/T1499"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(IDS|FW)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|HOST_TCP_ALERT_ON|UNBLOCK_HOST|TCP_SYN_ATTACK_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(New TCP connections to host|Syn Flood|(Max tcp half-open connections (.+) exceeded))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

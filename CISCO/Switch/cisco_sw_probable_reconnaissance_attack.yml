@@ -1,0 +1,30 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable Reconnaissance attack, detected by CISCO IOS"
+  severity: "High"
+  description: "Reconnaissance consists of techniques that involve adversaries actively or passively gathering information that can be used to support targeting. Such information may include details of the victim organization, infrastructure, or staff/personnel. This information can be leveraged by the adversary to aid in other phases of the adversary lifecycle, such as using gathered information to plan and execute Initial Access, to scope and prioritize post-compromise objectives, or to drive and lead further Reconnaissance efforts."
+  solution: "While network troubleshooting may require he legitimate use of this feature, this is unusual traffic that warrants investigation. When non-specific network traffic of this type is encountered, the most prudent action from a security perspective is or shun or disallow it. If the source of this traffic is legitimate he user will then identify him or herself. See the logs attached to this alert and URLs below for more information."
+  category: "Reconnaissance"
+  tactic: "Active Scanning"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+    - "https://attack.mitre.org/tactics/TA0043/"
+    - "https://attack.mitre.org/techniques/T1595"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(IDS)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|IPOPT_RR_SIG|IPOPT_TS_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(IP options-(Record|TimeStamp))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

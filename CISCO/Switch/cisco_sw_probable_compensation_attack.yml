@@ -1,0 +1,28 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable compensation attack, detected by CISCO IOS"
+  severity: "Medium"
+  description: "CRC-32 compensation vulnerability allows an attacker to execute arbitrary commands on the SSH server or otherwise subvert an encrypted SSH channel with arbitrary data."
+  solution: "See the logs attached to this alert for more information."
+  category: "Threat Protection"
+  tactic: ""
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(SSH)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(CRC-32 compensation attack)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

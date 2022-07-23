@@ -1,0 +1,29 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Network probably under attack, detected by CISCO IOS"
+  severity: "High"
+  description: "For security reasons users should not be allowed to execute programs via e-mail servers. This is a very serious indication that your network may be under attack and the source should be shunned immediately."
+  solution: "See the logs attached to this alert and investigate if is a normal behaviour or is part of an attack.
+             See the URL below for more information."
+  category: "Threat Protection"
+  tactic: ""
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(FW|IDS)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|TCP_SENDMAIL_BAD_FROM_SIG|TCP_SENDMAIL_DECODE|TCP_SENDMAIL_BAD_TO_SIG|TCP_SENDMAIL_OLD_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "((Sendmail Invalid (Sender|Recipient))|(Sendmail Decode Alias)|(Archaic Sendmail Attacks))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

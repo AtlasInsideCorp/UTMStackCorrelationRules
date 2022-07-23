@@ -1,0 +1,31 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable Defense Evasion, detected by CISCO IOS"
+  severity: "High"
+  description: "The adversary is trying to avoid being detected. Defense Evasion consists of techniques that adversaries use to avoid detection throughout their compromise. 
+                Techniques used for defense evasion include uninstalling/disabling security software or obfuscating/encrypting data and scripts. 
+                Adversaries also leverage and abuse trusted processes to hide and masquerade their malware."
+  solution: "There is no legitimate use for malformed TCP datagrams. This is unusual traffic and warrants investigation. Hacker tools will generateTCP packets with the SYN and FIN bits set in the flags field in an attempt to eludeintrusion dection. When non-specific network traffic of this type is encountered, the most prudent action from a security perspective is to shun or disallow it. If the source of this traffic is legitimate the user will then identify him or herself. Check the logs attached to this alert and URLs below for more information."
+  category: "Defense Evasion"
+  tactic: ""
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0005/"
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(IDS)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(TCP_SYN_FIN_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(SYN and FIN bits set)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

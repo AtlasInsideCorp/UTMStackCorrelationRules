@@ -1,0 +1,39 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable Adversary-in-the-Middle attack, detected by CISCO IOS"
+  severity: "High"
+  description: "Adversaries may attempt to position themselves between two or more networked devices using an adversary-in-the-middle (AiTM) 
+                technique to support follow-on behaviors such as Network Sniffing or Transmitted Data Manipulation. By abusing features of common 
+                networking protocols that can determine the flow of network traffic (e.g. ARP, DNS, LLMNR, etc.), adversaries may force a device 
+                to communicate through an adversary controlled system so they can collect information or perform additional actions."
+  solution: "<ol>
+             <li>Disable legacy network protocols that may be used to intercept network traffic if applicable, especially those that are not needed within an environment.</li>
+             <li>Ensure that all wired and/or wireless traffic is encrypted appropriately. Use best practices for authentication protocols, such as Kerberos, and ensure web traffic that may contain credentials is protected by SSL/TLS.</li>
+             <li>Use network appliances and host-based security software to block network traffic that is not necessary within the environment, such as legacy protocols that may be leveraged for AiTM conditions.</li>
+             <li>Train users to be suspicious about certificate errors. Adversaries may use their own certificates in an attempt to intercept HTTPS traffic. Certificate errors may arise when the application’s certificate does not match the one expected by the host.</li>
+             <li>See the logs attached to this alert for more information</li>
+             </ol>"
+  category: "Credential Access"
+  tactic: "Adversary-in-the-Middle attack"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0006/"
+    - "https://attack.mitre.org/techniques/T1557/"
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(SW_DAI)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(ACL_DENY|DHCP_SNOOPING_DENY|SPECIAL_LOG_ENTRY|UNAVAILABLE)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(Invalid ARP(s)? (packets)?)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

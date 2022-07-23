@@ -1,0 +1,32 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable denial of service (DoS) attack, detected by CISCO IOS"
+  severity: "High"
+  description: "A Denial of Service (DoS) attack is an attempt to make a machine or network resource unavailable to the intended users.
+                One common method of attack involves saturating the target machine with external communications requests so that it cannot
+                respond to legitimate traffic or the machine responds so slowly that it is essentially useless."
+  solution: "Check the logs attached to this alert to verify if is a device malfunction, strict configuration or is part of an attack, the source should be shunned until this behaviour is verified. See the URLs below for more information"
+  category: "Impact"
+  tactic: "Denial of Service (DoS)"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://attack.mitre.org/techniques/T1499/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(AP|CRYPTO|DHCP_SNOOPING|FW|MCAST)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|AUTH_PROXY_DDOS_ATTACK|POSTURE_EXCEED_MAX_INIT|QUEUE_FULL|ALERT_ON|ADDRESS_ALIASING_FALLBACK|MLD_ADDRESS_ALIASING_FALLBACK)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(Address Aliasing detected|DOS attack|Exceeded maximum limit|IKE message|ISAKMP message from|Fail to enqueue DHCP packet|(current (.+) rate))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

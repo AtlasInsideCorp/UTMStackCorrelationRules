@@ -1,0 +1,32 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Mail server probably under attack, detected by CISCO IOS"
+  severity: "Medium"
+  description: "Most of the times is a suspicious SMTP command in the inspected SMTP connection. 
+               This may indicate that a suspicious violation was detected and may be an attack 
+               to the mail server system. Somitimes the command is rejected and the connection is reset by the firewall 
+               immediately."
+  solution: "See the logs attached to this alert and investigate if is a normal behaviour or is part of an attack. 
+             See the URL below for more information."
+  category: "Threat Protection"
+  tactic: ""
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(FW|IDS)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|SMTP_INVALID_COMMAND|TCP_SENDMAIL_INVALID_COMMAND|TCP_SENDMAIL_BOUNCE_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "((Invalid SMTP command)|(Smail Attack))"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

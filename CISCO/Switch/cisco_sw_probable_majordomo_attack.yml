@@ -1,0 +1,31 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable attack using Majordomo, detected by CISCO IOS"
+  severity: "Medium"
+  description: "A bug in the Majordomo program will allow remote users to execute arbitrary commands at the privilege level of the server."
+  solution: "For security reasons users should not be allowed to execute programs via e-mail servers. This is a very serious indication that your network may be under attack and the
+             source should be shunned immediately. Check the logs attached to this alert for more information"
+  category: "Execution"
+  tactic: "System Services"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+    - "https://attack.mitre.org/tactics/TA0002/"
+    - "https://attack.mitre.org/techniques/T1569"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(IDS|FW)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|TCP_MAJORDOMO_EXEC_BUG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(Majordomo)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"

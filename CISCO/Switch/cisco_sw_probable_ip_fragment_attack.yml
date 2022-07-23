@@ -1,0 +1,31 @@
+#Based on https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf (july, 2022)
+#Rule version v1.0.0
+
+- name: "Probable IP Fragment attack, detected by CISCO IOS"
+  severity: "High"
+  description: "Triggers when any IP datagram is received with the (more fragments) flag set to 1 or if there is an offset indicated in the offset field. IP fragmentation attacks are a common form of denial of service attack, in which the perpetrator overbears a network by exploiting datagram fragmentation mechanisms."
+  solution: "IP datagrams may be fragmented normally as they are transported across the network. This is not uncommon, but is unusual enough that the traffic should be investigated. This is especially important if the network is protected by a packet filtering firewall. Check the logs attached to this alert for more information."
+  category: "Impact"
+  tactic: "Denial of Service (DoS)"
+  reference: 
+    - "https://www.cisco.com/c/en/us/td/docs/ios/15_0sy/system/messages/15sysmg.pdf"
+    - "https://attack.mitre.org/tactics/TA0040"
+    - "https://attack.mitre.org/techniques/T1499/"
+    - "https://www.imperva.com/learn/ddos/ip-fragmentation-attack-teardrop/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.cisco_switch.facility"
+          operator: "regexp"
+          value: "^(IDS)$"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "^(UNAVAILABLE|IPFRAG_ATTACK_SIG)$"
+        - field: "logx.cisco_switch.cisco_msg"
+          operator: "regexp"
+          value: "(IP Fragment Attack)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "host"
+          alias: "SourceHost"
