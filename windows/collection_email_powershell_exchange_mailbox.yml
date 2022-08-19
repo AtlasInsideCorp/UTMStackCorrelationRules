@@ -1,0 +1,58 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "Exporting Exchange Mailbox via PowerShell"
+  severity: "Medium"
+  description: "Identifies the use of the Exchange PowerShell cmdlet, New-MailBoxExportRequest, to export the contents of a primary
+                mailbox or archive to a .pst file. Adversaries may target user email to collect sensitive information."
+  solution: "Verify if the involved host is the Exchange server, if it is isolate the host to prevent further post-compromise behavior. Use the Remove-MailboxExportRequest cmdlet to remove fully or partially completed export requests.
+        Prioritize cases that involve personally identifiable information (PII) or other classified data. Investigate credential exposure on systems compromised or used by the attacker to ensure all compromised accounts are
+        identified. Reset passwords for these accounts and other potentially compromised credentials, such as email, business systems, and web services.
+        Review the privileges of users with the Mailbox Import Export privilege to ensure that the least privilege principle is being followed.
+        Run a full scan using the antimalware tool in place. This scan can reveal additional artifacts left in the system, persistence mechanisms, and malware components.
+        Determine the initial vector abused by the attacker and take action to prevent reinfection through the same vector."
+  category: "Colection"
+  tactic: "Data from Local System"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0009/"
+    - "https://attack.mitre.org/techniques/T1005/"
+    - "https://attack.mitre.org/techniques/T1114/"
+    - "https://attack.mitre.org/techniques/T1114/002/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.*command"
+          operator: "contain"
+          value: "New-MailboxExportRequest"
+      oneOf:
+        - field: "logx.*.processname"
+          operator: "regexp"
+          value: "(powershell.exe|pwsh.exe|powershell_ise.exe)"
+        - field: "logx.*.process"
+          operator: "regexp"
+          value: "(powershell.exe|pwsh.exe|powershell_ise.exe)"
+        - field: "logx.*.filePath"
+          operator: "regexp"
+          value: "(powershell.exe|pwsh.exe|powershell_ise.exe)"
+        - field: "logx.*.filename"
+          operator: "regexp"
+          value: "(powershell.exe|pwsh.exe|powershell_ise.exe)"
+        - field: "logx.*.name"
+          operator: "regexp"
+          value: "(powershell.exe|pwsh.exe|powershell_ise.exe)"
+        - field: "logx.*.file"
+          operator: "regexp"
+          value: "(powershell.exe|pwsh.exe|powershell_ise.exe)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"

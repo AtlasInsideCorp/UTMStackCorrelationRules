@@ -1,0 +1,54 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "Detection of possible Keylogger"
+  severity: "High"
+  description: "Keyloggers are a particularly insidious type of spyware that can record and steal consecutive keystrokes (and much more) 
+                that the user enters on a device. The term keylogger, or keystroke logger, is self-explanatory: Software that logs what you type on your keyboard. 
+                However, keyloggers can also enable cybercriminals to eavesdrop on you, watch you on your system camera, or listen over your smartphone's microphone"
+  solution: "Update the operating system and applications. Programs that are not up to date may have exposed security holes that can lead to computer infection.
+    Configure web browser security settings. Install reputable security software on the computer. Install both an antimalware on demand and an antivirus that you always have active.
+    Look at all the programs that start with the computer and see if there is anything you don't recognize."
+  category: "Credential Access"
+  tactic: "Keylogging"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0006/"
+    - "https://attack.mitre.org/techniques/T1056/"
+    - "https://attack.mitre.org/techniques/T1056/001/"
+  frequency: 60
+  cache: 
+    - oneOf:
+        - field: "logx.*.msg"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+        - field: "logx.*.threat_name"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+        - field: "logx.*.filePath"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+        - field: "logx.*.name"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+        - field: "logx.*.filename"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+        - field: "logx.*.file"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+        - field: "logx.*.download_file_name"
+          operator: "regexp"
+          value: "(actimonsetupnl.exe|fastmon.exe|ftviewer.exe|mset.exe|emconv.exe|keysetup.exe|mseidvsrm.exe|000012.exe|PFG.exe|setup_akl.exe|uib.exe|winsec.exe|akl.exe|akv.exe|CKM.exe|FKG.exe|HGI.exe|install_akl.exe|laugh.exe|NSK.exe|debugsvr.exe|ek_setup.exe|ek_setup30.exe|fontvsvr.exe|logs viewer.exe|rcimlsvr.exe|windump.exe|keylogger.exe|freekgbkeylogger-189.exe|kgbkeylogger-293.exe|kgbkeylogger294.exe|kgbspy_387.exe|kgbspy-389.exe|kgbspy-391.exe|kgbspy-393.exe|kgbspy394.exe|systems.exe|U.exe|freekgbkeylogger-191.exe|winlogons.exe|freekgbkeylogger-193.exe|freekgbkeylogger194.exe|keyspectpro.exe|keyspectpro_ro314.exe|kgb_KS.exe|kgbkeylogger-289.exe|kgbkeylogger-291.exe|crrst32.exe|crrt24.exe|pcs.exe|pcspyt.exe|prt.exe|rstins.exe|autofighter.exe|i_bpk2003.exe|keygen.exe|lview.exe|msmirco.exe|msmircor.exe|pgb.exe|tuchoi1.6.exe|tuchoi16.exe|tuchoi16_loader.exe|bpk.exe|bpkr.exe|bpkun.exe|bpkvw.exe|i_bpk_lite.exe|i_bpk_lite.exe|i_bpk147.exe|i_bpk153.exe|elpow_log.exe|KGV.exe|MSPKV.exe|PKMailer.exe|pkviewer.exe|powered_keylogger.exe|SKUninstaller.exe|stealthkeylogger.exe|SysScrCap.exe|SysSMTPSender.exe|SystemKey.exe|systemkeyuninstaller.exe|pcspy.exe|RSR.exe|rx.exe|sysrts.exe|systemout.exe|xld.exe|xpcspy.exe|xpcspyp 1.62.exe|xpcspypro.exe)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"
