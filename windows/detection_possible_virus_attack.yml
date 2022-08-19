@@ -1,0 +1,51 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "Detection of a Virus Attack"
+  severity: "High"
+  description: "A computer virus is a piece of malicious code that is prepended or appended to existing files on your computer. 
+                Viruses are named after biological viruses because they use similar techniques to spread from one place to another. 
+                Virus is often misused to refer to any threat. This usage is gradually being replaced with a more accurate term, malware (malicious software).
+                Computer viruses primarly attack executable files and documents. In short, this is how a computer virus works: 
+                after running the infected file, the malicious code is called and executed prior to the execution of the original application. 
+                A virus can infect any files that the current user has write permissions for.
+                Computer viruses can range in purpose and severity. Some of them are extremely dangerous because of their ability to delete files purposely from the hard drive. 
+                On the other hand, some viruses do not cause any damage they only serve to annoy the user and demonstrate the technical skills of their authors."
+  solution: "Install anti-virus/malware software to keep your PC virus free. Keep your antivirus 
+             software up to date. Run regularly scheduled scans with your antivirus software. 
+             Keep your operating system up to date. Protect your red."
+  category: "Execution"
+  tactic: "User Execution: Malicious File"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0002/"
+    - "https://attack.mitre.org/techniques/T1204/002/"
+  frequency: 60
+  cache: 
+    - oneOf:
+        - field: "logx.*.action"
+          operator: "regexp"
+          value: "([Ll]eft [Aa]lone|[Qq]uarantined|[Rr]enamed|[Dd]eleted|[Dd]etected|[Ii]nfected|[Bb]locked)"
+        - field: "logx.*.action_taken"
+          operator: "regexp"
+          value: "([Ll]eft [Aa]lone|[Qq]uarantined|[Rr]enamed|[Dd]eleted|[Dd]etected|[Ii]nfected|[Bb]locked)"
+        - field: "logx.*.act_msg"
+          operator: "regexp"
+          value: "([Ll]eft [Aa]lone|[Qq]uarantined|[Rr]enamed|[Dd]eleted|[Dd]etected|[Ii]nfected|[Bb]locked)"
+        - field: "logx.*.act"
+          operator: "regexp"
+          value: "([Ll]eft [Aa]lone|[Qq]uarantined|[Rr]enamed|[Dd]eleted|[Dd]etected|[Ii]nfected|[Bb]locked)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"
+    
+    

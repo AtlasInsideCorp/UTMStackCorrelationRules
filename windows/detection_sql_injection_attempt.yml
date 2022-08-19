@@ -1,0 +1,43 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "Detection of SQL Injection Attempt"
+  severity: "High"
+  description: "SQL injection is a type of covert cyberattack in which a hacker inserts their own code into a website in order to break security measures and access protected data. 
+                Once inside, it can control the website's database and hijack users' information."
+  category: "Initial Access"
+  tactic: "Exploit Public-Facing Application"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0001/"
+    - "https://attack.mitre.org/techniques/T1190/"
+  frequency: 60
+  cache: 
+    - oneOf:
+        - field: "logx.*.msg"
+          operator: "regexp"
+          value: "(union%20select| or   = | %20or%20  = |25%20or%201=1|25%20or%201=0|')%20or%20('1'='1--|%20or%201=0|%20or%201=1|%20src=|%28alert|%3aalert|%3bid|%3c/script|%3cbody|%3ciframe|%3cimg%20src|%3clink%20|')%20or%20'1'='1--|%3cscript|%3Escript|'%20or%201=1#|'%20or%201=1--|'%20or%201=1| or 1=0| or 1=1| src=|%3Cscript|' or 1=1#|' or 1=1--|' or 1=1/| ;!-- <XSS>=&{()}|') or '1'='1--|') or ('1'='1--|(xss)|(alert|3ealert|:alert|;id;|;id\\||<body|<iframe|<IMG SRC|<LINK |<script|>alert|>script|admin' #|admin' --|admin'%20#|admin'%20--|admin'/|id; |id;%20|javascript:alert|union select|{alert|\\| `id` \\|)"
+        - field: "logx.*.object_uri"
+          operator: "regexp"
+          value: "(union%20select| or   = | %20or%20  = |25%20or%201=1|25%20or%201=0|')%20or%20('1'='1--|%20or%201=0|%20or%201=1|%20src=|%28alert|%3aalert|%3bid|%3c/script|%3cbody|%3ciframe|%3cimg%20src|%3clink%20|')%20or%20'1'='1--|%3cscript|%3Escript|'%20or%201=1#|'%20or%201=1--|'%20or%201=1| or 1=0| or 1=1| src=|%3Cscript|' or 1=1#|' or 1=1--|' or 1=1/| ;!-- <XSS>=&{()}|') or '1'='1--|') or ('1'='1--|(xss)|(alert|3ealert|:alert|;id;|;id\\||<body|<iframe|<IMG SRC|<LINK |<script|>alert|>script|admin' #|admin' --|admin'%20#|admin'%20--|admin'/|id; |id;%20|javascript:alert|union select|{alert|\\| `id` \\|)"
+        - field: "logx.*.url"
+          operator: "regexp"
+          value: "(union%20select| or   = | %20or%20  = |25%20or%201=1|25%20or%201=0|')%20or%20('1'='1--|%20or%201=0|%20or%201=1|%20src=|%28alert|%3aalert|%3bid|%3c/script|%3cbody|%3ciframe|%3cimg%20src|%3clink%20|')%20or%20'1'='1--|%3cscript|%3Escript|'%20or%201=1#|'%20or%201=1--|'%20or%201=1| or 1=0| or 1=1| src=|%3Cscript|' or 1=1#|' or 1=1--|' or 1=1/| ;!-- <XSS>=&{()}|') or '1'='1--|') or ('1'='1--|(xss)|(alert|3ealert|:alert|;id;|;id\\||<body|<iframe|<IMG SRC|<LINK |<script|>alert|>script|admin' #|admin' --|admin'%20#|admin'%20--|admin'/|id; |id;%20|javascript:alert|union select|{alert|\\| `id` \\|)"
+        - field: "logx.*.requestUrl"
+          operator: "regexp"
+          value: "(union%20select| or   = | %20or%20  = |25%20or%201=1|25%20or%201=0|')%20or%20('1'='1--|%20or%201=0|%20or%201=1|%20src=|%28alert|%3aalert|%3bid|%3c/script|%3cbody|%3ciframe|%3cimg%20src|%3clink%20|')%20or%20'1'='1--|%3cscript|%3Escript|'%20or%201=1#|'%20or%201=1--|'%20or%201=1| or 1=0| or 1=1| src=|%3Cscript|' or 1=1#|' or 1=1--|' or 1=1/| ;!-- <XSS>=&{()}|') or '1'='1--|') or ('1'='1--|(xss)|(alert|3ealert|:alert|;id;|;id\\||<body|<iframe|<IMG SRC|<LINK |<script|>alert|>script|admin' #|admin' --|admin'%20#|admin'%20--|admin'/|id; |id;%20|javascript:alert|union select|{alert|\\| `id` \\|)"
+        - field: "logx.*.domain"
+          operator: "regexp"
+          value: "(union%20select| or   = | %20or%20  = |25%20or%201=1|25%20or%201=0|')%20or%20('1'='1--|%20or%201=0|%20or%201=1|%20src=|%28alert|%3aalert|%3bid|%3c/script|%3cbody|%3ciframe|%3cimg%20src|%3clink%20|')%20or%20'1'='1--|%3cscript|%3Escript|'%20or%201=1#|'%20or%201=1--|'%20or%201=1| or 1=0| or 1=1| src=|%3Cscript|' or 1=1#|' or 1=1--|' or 1=1/| ;!-- <XSS>=&{()}|') or '1'='1--|') or ('1'='1--|(xss)|(alert|3ealert|:alert|;id;|;id\\||<body|<iframe|<IMG SRC|<LINK |<script|>alert|>script|admin' #|admin' --|admin'%20#|admin'%20--|admin'/|id; |id;%20|javascript:alert|union select|{alert|\\| `id` \\|)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"
