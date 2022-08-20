@@ -1,0 +1,46 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "PowerShell Suspicious Script with Screenshot Capabilities"
+  severity: "Medium"
+  description: "Detects PowerShell scripts that can take screenshots, which is a common feature in post-exploitation kits and remote
+                access tools (RATs)"
+  solution: "Isolate the involved hosts to prevent further post-compromise behavior.
+      Investigate credential exposure on systems compromised or used by the attacker to ensure all compromised accounts are
+      identified. Reset passwords for these accounts and other potentially compromised credentials, such as email, business
+      systems, and web services.
+      Run a full antimalware scan. This may reveal additional artifacts left in the system, persistence mechanisms, and
+      malware components.
+      Determine the initial vector abused by the attacker and take action to prevent reinfection through the same vector.
+      Using the incident response data, update logging and audit policies to improve the mean time to detect (MTTD) and the
+      me an time to respond (MTTR)"
+  category: "Collection"
+  tactic: "Screen Capture"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0009/"
+    - "https://attack.mitre.org/techniques/T1113/"
+  frequency: 60
+  cache: 
+    - oneOf:
+        - field: "logx.*.command"
+          operator: "regexp"
+          value: "(CopyFromScreen|System.Drawing.Bitmap|Drawing.Bitmap)"
+        - field: "logx.*.msg"
+          operator: "regexp"
+          value: "(CopyFromScreen|System.Drawing.Bitmap|Drawing.Bitmap)"
+        - field: "logx.*.result"
+          operator: "regexp"
+          value: "(CopyFromScreen|System.Drawing.Bitmap|Drawing.Bitmap)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"

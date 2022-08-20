@@ -1,0 +1,62 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "Network Connection via Certutil"
+  severity: "Low"
+  description: "Identifies certutil.exe making a network connection. Adversaries could abuse certutil.exe to download a certificate, or
+                malware, from a remote URL"
+  solution: "Isolate the involved hosts to prevent further post-compromise behavior.
+      Investigate credential exposure on systems compromised or used by the attacker to ensure all compromised accounts are
+      identified. Reset passwords for these accounts and other potentially compromised credentials, such as email, business
+      systems, and web services.
+      Run a full antimalware scan. This may reveal additional artifacts left in the system, persistence mechanisms, and
+      malware components.
+      Determine the initial vector abused by the attacker and take action to prevent reinfection through the same vector.
+      Using the incident response data, update logging and audit policies to improve the mean time to detect (MTTD) and the
+      me an time to respond (MTTR)"
+  category: "Command and Control"
+  tactic: "Ingress Tool Transfer"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0011/"
+    - "https://attack.mitre.org/techniques/T1105/"
+  frequency: 60
+  cache: 
+    - oneOf:
+        - field: "logx.*.msg"
+          operator: "contain"
+          value: "certutil.exe"
+        - field: "logx.*.threat_name"
+          operator: "contain"
+          value: "certutil.exe"
+        - field: "logx.*.filePath"
+          operator: "contain"
+          value: "certutil.exe"
+        - field: "logx.*.name"
+          operator: "contain"
+          value: "certutil.exe"
+        - field: "logx.*.filename"
+          operator: "contain"
+          value: "certutil.exe"
+        - field: "logx.*.file"
+          operator: "contain"
+          value: "certutil.exe"
+        - field: "logx.*.download_file_name"
+          operator: "contain"
+          value: "certutil.exe"
+      allOf:
+        - field: "logx.*.dest_ip"
+          operator: "not in"
+          value: "10.0.0.0,127.0.0.0,169.254.0.0,172.16.0.0,192.0.0.0,192.0.0.0,192.0.0.8,192.0.0.9,192.0.0.10,192.0.0.170,192.0.0.171,192.0.2.0,192.31.196.0,192.52.193.0,192.168.0.0,192.88.99.0,224.0.0.0,100.64.0.0,192.175.48.0,198.18.0.0,198.51.100.0,203.0.113.0,240.0.0.0,::1,FE80::/10,FF00"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"

@@ -1,0 +1,57 @@
+# Based in IOCs of the web
+# Rule version v1.0.0
+
+- name: "Connection to Commonly Abused Web Services"
+  severity: "Low"
+  description: "Adversaries may implement command and control (C2) communications that use common web services to hide their
+                activity. This attack technique is typically targeted at an organization and uses web services common to the victim
+                network, which allows the adversary to blend into legitimate traffic activity. These popular services are typically
+                targeted since they have most likely been used before compromise, which helps malicious traffic blend in."
+  solution: "Isolate the involved hosts to prevent further post-compromise behavior.
+      Investigate credential exposure on systems compromised or used by the attacker to ensure all compromised accounts are
+      identified. Reset passwords for these accounts and other potentially compromised credentials, such as email, business
+      systems, and web services.
+      Run a full antimalware scan. This may reveal additional artifacts left in the system, persistence mechanisms, and
+      malware components.
+      Determine the initial vector abused by the attacker and take action to prevent reinfection through the same vector.
+      Using the incident response data, update logging and audit policies to improve the mean time to detect (MTTD) and the
+      me an time to respond (MTTR)"
+  category: "Exfiltration"
+  tactic: "Exfiltration Over Web Service"
+  reference:
+    - "https://attack.mitre.org/tactics/TA0010/"
+    - "https://attack.mitre.org/techniques/T1567/"
+  frequency: 60
+  cache: 
+    - allOf:
+        - field: "logx.*.proto"
+          operator: "in"
+          value: "dns,DNS"
+        - field: "logx.*.msg"
+          operator: "regexp"
+          value: "(raw.githubusercontent.|.pastebin.|drive.google.|docs.live.|api.dropboxapi.|dropboxusercontent.|onedrive.|4shared.|.file.io|filebin.net|slack-files.com|ghostbin.|ngrok.|portmap.|serveo.net|localtunnel.me|pagekite.me|localxpose.io|notabug.org|rawcdn.githack.|paste.nrecom.net|zerobin.net|controlc.com|requestbin.net|cdn.discordapp.com|discordapp.com|discord.com)"
+        - field: "logx.*.object_uri"
+          operator: "regexp"
+          value: "(raw.githubusercontent.|.pastebin.|drive.google.|docs.live.|api.dropboxapi.|dropboxusercontent.|onedrive.|4shared.|.file.io|filebin.net|slack-files.com|ghostbin.|ngrok.|portmap.|serveo.net|localtunnel.me|pagekite.me|localxpose.io|notabug.org|rawcdn.githack.|paste.nrecom.net|zerobin.net|controlc.com|requestbin.net|cdn.discordapp.com|discordapp.com|discord.com)"
+        - field: "logx.*.url"
+          operator: "regexp"
+          value: "(raw.githubusercontent.|.pastebin.|drive.google.|docs.live.|api.dropboxapi.|dropboxusercontent.|onedrive.|4shared.|.file.io|filebin.net|slack-files.com|ghostbin.|ngrok.|portmap.|serveo.net|localtunnel.me|pagekite.me|localxpose.io|notabug.org|rawcdn.githack.|paste.nrecom.net|zerobin.net|controlc.com|requestbin.net|cdn.discordapp.com|discordapp.com|discord.com)"
+        - field: "logx.*.domain"
+          operator: "regexp"
+          value: "(raw.githubusercontent.|.pastebin.|drive.google.|docs.live.|api.dropboxapi.|dropboxusercontent.|onedrive.|4shared.|.file.io|filebin.net|slack-files.com|ghostbin.|ngrok.|portmap.|serveo.net|localtunnel.me|pagekite.me|localxpose.io|notabug.org|rawcdn.githack.|paste.nrecom.net|zerobin.net|controlc.com|requestbin.net|cdn.discordapp.com|discordapp.com|discord.com)"
+        - field: "logx.*.requestUrl"
+          operator: "regexp"
+          value: "(raw.githubusercontent.|.pastebin.|drive.google.|docs.live.|api.dropboxapi.|dropboxusercontent.|onedrive.|4shared.|.file.io|filebin.net|slack-files.com|ghostbin.|ngrok.|portmap.|serveo.net|localtunnel.me|pagekite.me|localxpose.io|notabug.org|rawcdn.githack.|paste.nrecom.net|zerobin.net|controlc.com|requestbin.net|cdn.discordapp.com|discordapp.com|discord.com)"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"
