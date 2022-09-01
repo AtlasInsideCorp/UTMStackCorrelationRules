@@ -1,0 +1,137 @@
+# Rule version 1.1.0
+- name: "Detection of connection established from countries that are on a blacklist of disallowed countries"
+  severity: "High"
+  description: "This rule detects when a connection is established from a country that is on the blacklist of disallowed countries.
+                An unauthorized authentication attempt by an unauthorized user may be taking place, as a means of gaining initial access, persistence, privilege escalation, or defense evasion."
+  solution: "We recommend carefully reviewing each of the logs to verify the details about this connection attempt from a country 
+      inside blacklist of allowed countries, and if necessary, report it to take the appropriate actions with this user not allowed."
+  category: "Initial Access"
+  tactic: "Valid Accounts"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0001/"
+    - "https://attack.mitre.org/techniques/T1078/"
+  frequency: 60
+  cache:
+    - oneOf:
+        - field: "logx.sentinel_one.signatureID"
+          operator: "=="
+          value: "27"
+        - field: "logx.azure.description"
+          operator: "regexp"
+          value: "([Ll]og(in|on) [Ss]ucce)"
+        - field: "logx.cisco_asa.messageid"
+          operator: "in"
+          value: "109005,109007,611101,113012,605005,713052"
+        - field: "logx.cisco_firepower.messageid"
+          operator: "in"
+          value: "611101,113012,605005,713052"
+        - field: "logx.meraki.event_type"
+          operator: "regexp"
+          value: "([Aa]uth)"
+        - field: "logx.cisco_switch.facility_mnemonic"
+          operator: "regexp"
+          value: "LOGIN_SUCCESS"
+        - field: "logx.apache.auth"
+          operator: "!="
+          value: "-"
+        - field: "logx.auditd.message"
+          operator: "regexp"
+          value: "type=USER_AUTH(.+)res=success"
+        - field: "logx.elasticsearch.message"
+          operator: "regexp"
+          value: "access_granted"
+        - field: "logx.kafka.msg"
+          operator: "regexp"
+          value: "(connection established, initiating session)"
+        - field: "logx.fortigate.logid"
+          operator: "regexp"
+          value: "(32001|29002|43008|43025|43039|43045)"
+        - field: "logx.github.login"
+          operator: "exist"
+          value:
+        - field: "logx.nids.rfb.authentication.security-result"
+          operator: "=="
+          value: "OK"
+        - field: "logx.paloalto_fw.message"
+          operator: "regexp"
+          value: "((AUTHENTICATION|authentication)(.+)([Ss]uccess|[Pp]ermited|[Ss]uccessfully))"
+        - field: "logx.paloalto_cortex_xdr.msgTextEn"
+          operator: "regexp"
+          value: "([Uu]ser(.+)has logged)"
+        - field: "logx.wineventlog.event_name"
+          operator: "=="
+          value: "An account was successfully logged on"
+        - field: "logx.esmc_eset.message"
+          operator: "regexp"
+          value: "(\"action\":\"Login attempt\"(.+)\"result\":\"Success\")"
+        - field: "logx.o365.Operation"
+          operator: "=="
+          value: "UserLoggedIn"
+        - field: "logx.sophos.message"
+          operator: "regexp"
+          value: "(log_subtype=\"Authentication\" status=\"Successful\")"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+    - allOf:
+        - field: "logx.*.SourceCountry"
+          operator: "in"
+          value: "Cuba,Iran,Russia,North Korea,Syria,Balkans,Belarus,Central African Republic,Congo,Ethiopia,Hong Kong,Iraq,Venezuela,Sudan,Libya,Lebanon,Yemen,Zimbabwe"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"
+#Rule for logs of AWS
+- name: "Detection in AWS of connection established from countries that are on a blacklist of disallowed countries"
+  severity: "High"
+  description: "This rule detects in AWS when a connection is established from a country that is in the blacklist of allowed countries. 
+                An unauthorized authentication attempt by an unauthorized user may be taking place, as a means of gaining initial access, persistence, privilege escalation, or defense evasion."
+  solution: "We recommend carefully reviewing each of the logs to verify the details about this connection attempt from a country 
+      inside blacklist of allowed countries, and if necessary, report it to take the appropriate actions with this user not allowed."
+  category: "Initial Access"
+  tactic: "Valid Accounts"
+  reference: 
+    - "https://attack.mitre.org/tactics/TA0001/"
+    - "https://attack.mitre.org/techniques/T1078/"
+  frequency: 60
+  cache:
+    - allOf:
+        - field: "logx.aws.eventType"
+          operator: "=="
+          value: "AwsConsoleSignIn"
+        - field: "logx.aws.responseElements.ConsoleLogin"
+          operator: "=="
+          value: "Success"
+      timeLapse: 60
+      minCount: 1
+      save:
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+    - allOf:
+        - field: "logx.*.SourceCountry"
+          operator: "in"
+          value: "Cuba,Iran,Russia,North Korea,Syria,Balkans,Belarus,Central African Republic,Congo,Ethiopia,Hong Kong,Iraq,Venezuela,Sudan,Libya,Lebanon,Yemen,Zimbabwe"
+      minCount: 1
+      timeLapse: 60
+      save:
+        - field: "logx.*.proto"
+          alias: "Protocol"
+        - field: "logx.*.src_ip"
+          alias: "SourceIP"
+        - field: "logx.*.src_port"
+          alias: "SourcePort"
+        - field: "logx.*.dest_ip"
+          alias: "DestinationIP"
+        - field: "logx.*.dest_port"
+          alias: "DestinationPort"
